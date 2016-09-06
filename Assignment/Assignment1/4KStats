@@ -1,0 +1,106 @@
+TABLE_NA   NUM_ROWS     BLOCKS  AVG_SPACE AVG_ROW_LEN
+-------- ---------- ---------- ---------- -----------
+CLASS            15          5       7896          57 
+PRODUCER          9          5       7978          51 
+REGION            9          5       7967          57 
+STATE             7          5       8003          48 
+VINEYARD        160         13       4220         311 
+WINE           1500         65       1621         277 
+
+ 6 rows selected 
+
+TABLE_NA COLUMN_NAME  DATA_TYPE    DATA_LENGTH NULLABLE NUM_DISTINCT
+-------- ------------ ------------ ----------- -------- ------------
+CLASS    CID          CHAR                   6 N                  15 
+CLASS    CNAME        CHAR                  40 N                  15 
+CLASS    COLOUR       CHAR                   5 Y                   3 
+PRODUCER PID          CHAR                   6 N                   9 
+PRODUCER PNAME        CHAR                  40 N                   9 
+REGION   RID          CHAR                   8 N                   9 
+REGION   SID          CHAR                   3 N                   5 
+REGION   RNAME        CHAR                  40 N                   9 
+STATE    SID          CHAR                   3 N                   7 
+STATE    SNAME        CHAR                  40 N                   7 
+VINEYARD VID          CHAR                   8 N                 160 
+VINEYARD PID          CHAR                   6 N                   9 
+VINEYARD RID          CHAR                   8 N                   9 
+VINEYARD VNAME        CHAR                  40 N                  20 
+VINEYARD VMANAGER     CHAR                  40 N                  20 
+VINEYARD COMMENTS     CHAR                 200 Y                   1 
+WINE     VINTAGE      NUMBER                22 N                  28 
+WINE     WINE_NO      NUMBER                22 N                 101 
+WINE     VID          CHAR                   8 N                 160 
+WINE     CID          CHAR                   6 N                  15 
+WINE     PCTALC       NUMBER                22 Y                  27 
+WINE     PRICE        NUMBER                22 Y                  32 
+WINE     GRADE        CHAR                   1 N                   4 
+WINE     WNAME        CHAR                  40 N                   1 
+WINE     COMMENTS     CHAR                 200 N                   1 
+
+ 25 rows selected 
+
+TABLE_NA INDEX_NAME   COLUMN_POSITION COLUMN_NAME
+-------- ------------ --------------- ------------
+CLASS    SYS_C0018870               1 CID          
+         4                                         
+
+PRODUCER SYS_C0018871               1 PID          
+         0                                         
+
+REGION   SYS_C0018871               1 RID          
+         4                                         
+
+STATE    SYS_C0018870               1 SID          
+         7                                         
+
+VINEYARD SYS_C0018872               1 VID          
+         1                                         
+
+WINE     SYS_C0018873               1 VINTAGE      
+         1                                         
+
+WINE     SYS_C0018873               2 WINE_NO      
+         1                                         
+
+WINE     WVCGIDX                    1 VID          
+WINE     WVCGIDX                    2 CID          
+WINE     WVCGIDX                    3 GRADE        
+WINE     WVCIDX                     1 VID          
+WINE     WVCIDX                     2 CID          
+WINE     WVGCIDX                    1 VID          
+WINE     WVGCIDX                    2 GRADE        
+WINE     WVGCIDX                    3 CID          
+WINE     WVGIDX                     1 VID          
+WINE     WVGIDX                     2 GRADE        
+WINE     WVIDX                      1 VID          
+
+ 18 rows selected 
+
+TABLE_NA INDEX_NAME   UNIQUENESS     BLEVEL LEAF_BLOCKS DISTINCT_KEYS CLUSTERING_FACTOR
+-------- ------------ ---------- ---------- ----------- ------------- -----------------
+CLASS    SYS_C0018870 UNIQUE              0           1            15                 1 
+         4                                                                              
+
+PRODUCER SYS_C0018871 UNIQUE              0           1             9                 1 
+         0                                                                              
+
+REGION   SYS_C0018871 UNIQUE              0           1             9                 1 
+         4                                                                              
+
+STATE    SYS_C0018870 UNIQUE              0           1             7                 1 
+         7                                                                              
+
+VINEYARD SYS_C0018872 UNIQUE              0           1           160                 7 
+         1                                                                              
+
+WINE     SYS_C0018873 UNIQUE              1           6          1500                78 
+         1                                                                              
+
+WINE     WVCGIDX      NONUNIQUE           1           7           400              1500 
+WINE     WVCIDX       NONUNIQUE           1           6           400              1500 
+WINE     WVGCIDX      NONUNIQUE           1           7           400              1500 
+WINE     WVGIDX       NONUNIQUE           1           5           224               887 
+WINE     WVIDX        NONUNIQUE           1           5           160               645 
+
+ 11 rows selected 
+

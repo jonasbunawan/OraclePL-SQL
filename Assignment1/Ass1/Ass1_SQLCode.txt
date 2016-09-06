@@ -1,0 +1,860 @@
+--Replace the Xs below with your details
+
+--Student Id:         700513X
+--Student Firstname:  Jonas
+--Student Surname:    Bunawan
+--Lab Day:            Friday
+--Lab Time:           08:30-10:30
+
+--NOTES:
+--Add code to create Procedures and Functions code to this file as directed.
+--Always use CREATE OR REPLACE... keywords at the beginging of each block of code
+
+--Do NOT include any Anonymous Blocks
+
+--Separate all SPs and SFs with a line the contains a single slash
+
+--When complete, the contents of this file should be able to be executed in your tutor's
+--account so that it will create all the apporpriate SPs and SFs
+
+/
+
+SET SERVEROUTPUT ON;
+/
+
+--Replace Xs below with Task 1.1 code
+CREATE OR REPLACE PROCEDURE ADD_CUSTOMER_TO_DB (pcustid NUMBER, pcustname VARCHAR2) AS
+  err_custid EXCEPTION;
+BEGIN
+  IF pcustid < 1 OR pcustid > 499 THEN
+    RAISE err_custid;
+  END IF;
+  
+  INSERT INTO CUSTOMER(CUSTID, CUSTNAME, SALES_YTD, STATUS) VALUES(pcustid, pcustname, 0, 'OK');
+EXCEPTION
+  WHEN DUP_VAL_ON_INDEX THEN
+    RAISE_APPLICATION_ERROR(-20001, 'Duplicate Customer ID');
+  WHEN err_custid THEN
+    RAISE_APPLICATION_ERROR(-20002, 'Customer ID out of range');
+  WHEN OTHERS THEN
+    RAISE_APPLICATION_ERROR(-20000, SQLERRM);
+END;
+/
+
+CREATE OR REPLACE PROCEDURE ADD_CUSTOMER_VIASQLDEV (pcustid NUMBER, pcustname VARCHAR2) AS
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('---------------------------------------------------------------');
+  DBMS_OUTPUT.PUT_LINE('Adding Customer. ID: ' || pcustid || ' Name: ' || pcustname);
+  
+  ADD_CUSTOMER_TO_DB(pcustid, pcustname);
+  
+  DBMS_OUTPUT.PUT_LINE('Customer Added OK');
+  COMMIT;
+EXCEPTION
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE(SQLERRM);
+    ROLLBACK;
+END;
+
+
+/
+
+--Replace Xs below with Task 1.2 code
+CREATE OR REPLACE FUNCTION DELETE_ALL_CUSTOMERS_FROM_DB RETURN NUMBER AS
+BEGIN
+  DELETE FROM CUSTOMER;
+  RETURN SQL%ROWCOUNT;
+EXCEPTION
+  WHEN OTHERS THEN
+    RAISE_APPLICATION_ERROR(-20000, SQLERRM);
+END;
+/
+
+CREATE OR REPLACE PROCEDURE DELETE_ALL_CUSTOMERS_VIASQLDEV AS
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('---------------------------------------------------------------');
+  DBMS_OUTPUT.PUT_LINE('Deleting all Customer rows');
+  DBMS_OUTPUT.PUT_LINE(DELETE_ALL_CUSTOMERS_FROM_DB || ' rows deleted');
+  COMMIT;
+EXCEPTION
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE(SQLERRM);
+    ROLLBACK;
+END;
+
+
+/
+
+--Replace Xs below with Task 1.3 code
+CREATE OR REPLACE PROCEDURE ADD_PRODUCT_TO_DB (pprodid NUMBER, pprodname VARCHAR2, pprice NUMBER) AS
+  err_prodid EXCEPTION;
+  err_price EXCEPTION;
+BEGIN
+  IF pprodid < 1000 OR pprodid > 2500 THEN
+    RAISE err_prodid;
+  ELSIF pprice >= 1000 THEN
+    RAISE err_price;
+  END IF;
+  INSERT INTO PRODUCT(PRODID, PRODNAME, SELLING_PRICE, SALES_YTD) VALUES(pprodid, pprodname, pprice, 0);
+EXCEPTION
+  WHEN DUP_VAL_ON_INDEX THEN
+    RAISE_APPLICATION_ERROR(-20011, 'Duplicate product ID');
+  WHEN err_prodid THEN
+    RAISE_APPLICATION_ERROR(-20012, 'Product ID out of range');
+  WHEN err_price THEN
+    RAISE_APPLICATION_ERROR(-20013, 'Price out of range');
+  WHEN OTHERS THEN
+    RAISE_APPLICATION_ERROR(-20000, SQLERRM);
+END;
+/
+
+CREATE OR REPLACE PROCEDURE ADD_PRODUCT_VIASQLDEV (pprodid NUMBER, pprodname VARCHAR2, pprice NUMBER) AS
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('---------------------------------------------------------------');
+  DBMS_OUTPUT.PUT_LINE('Adding Product. ID: ' || pprodid || ' Name: ' || pprodname || ' Price: ' || pprice);
+  
+  ADD_PRODUCT_TO_DB(pprodid, pprodname, pprice);
+  
+  DBMS_OUTPUT.PUT_LINE('Product Added OK');
+  COMMIT;
+EXCEPTION
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE(SQLERRM);
+    ROLLBACK;
+END;
+/
+
+CREATE OR REPLACE FUNCTION DELETE_ALL_PRODUCTS_FROM_DB RETURN NUMBER AS
+BEGIN
+  DELETE FROM PRODUCT;
+  RETURN SQL%ROWCOUNT;
+EXCEPTION
+  WHEN OTHERS THEN
+    RAISE_APPLICATION_ERROR(-20000, SQLERRM);
+END;
+/
+
+CREATE OR REPLACE PROCEDURE DELETE_ALL_PRODUCTS_VIASQLDEV AS
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('---------------------------------------------------------------');
+  DBMS_OUTPUT.PUT_LINE('Deleting all Products rows');
+  DBMS_OUTPUT.PUT_LINE(DELETE_ALL_PRODUCTS_FROM_DB || ' rows deleted');
+  COMMIT;
+EXCEPTION
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE(SQLERRM);
+    ROLLBACK;
+END;
+
+
+/
+
+--Replace Xs below with Task 1.4 code
+CREATE OR REPLACE FUNCTION GET_CUST_STRING_FROM_DB (pcustid NUMBER) RETURN VARCHAR2 AS
+  vcustid CUSTOMER.CUSTID%TYPE;
+  vcustname CUSTOMER.CUSTNAME%TYPE;
+  vstatus CUSTOMER.STATUS%TYPE;
+  vsalesytd CUSTOMER.SALES_YTD%TYPE;
+  vstr VARCHAR2(100);
+BEGIN
+  SELECT CUSTID, CUSTNAME, STATUS, SALES_YTD INTO vcustid, vcustname, vstatus, vsalesytd
+  FROM CUSTOMER WHERE CUSTID = pcustid;
+  vstr := 'Custid: ' || vcustid || ' Name: ' || vcustname || ' Status: ' || vstatus || ' SalesYTD: ' || vsalesytd;
+  RETURN vstr;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    RAISE_APPLICATION_ERROR(-20021, 'Customer ID not found');
+  WHEN OTHERS THEN
+    RAISE_APPLICATION_ERROR(-20000, SQLERRM);
+END;
+/
+
+CREATE OR REPLACE PROCEDURE GET_CUST_STRING_VIASQLDEV (pcustid NUMBER) AS
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('---------------------------------------------------------------');
+  DBMS_OUTPUT.PUT_LINE('Getting Details for CustId ' || pcustid);
+  DBMS_OUTPUT.PUT_LINE(GET_CUST_STRING_FROM_DB(pcustid));
+EXCEPTION
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE(SQLERRM);
+END;
+/
+
+CREATE OR REPLACE PROCEDURE UPD_CUST_SALESYTD_IN_DB (pcustid NUMBER, pamt NUMBER) AS
+  err_amt EXCEPTION;
+  err_notfound EXCEPTION;
+BEGIN
+  IF pamt < -999.99 OR pamt > 999.99 THEN
+    RAISE err_amt;
+  END IF;
+  
+  UPDATE CUSTOMER SET SALES_YTD = SALES_YTD + pamt WHERE CUSTID = pcustid;
+  
+  IF SQL%NOTFOUND THEN
+    RAISE err_notfound;
+  END IF;
+EXCEPTION
+  WHEN err_notfound THEN
+    RAISE_APPLICATION_ERROR(-20031, 'Customer ID not found');
+  WHEN err_amt THEN
+    RAISE_APPLICATION_ERROR(-20032, 'Amount out of range');
+  WHEN OTHERS THEN
+    RAISE_APPLICATION_ERROR(-20000, SQLERRM);
+END;
+/
+
+CREATE OR REPLACE PROCEDURE UPD_CUST_SALESYTD_VIASQLDEV (pcustid NUMBER, pamt NUMBER) AS
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('---------------------------------------------------------------');
+  DBMS_OUTPUT.PUT_LINE('Updating SalesYTD. Customer Id: ' || pcustid || ' Amount: ' || pamt);
+  UPD_CUST_SALESYTD_IN_DB(pcustid, pamt);
+  DBMS_OUTPUT.PUT_LINE('Update OK');
+  COMMIT;
+EXCEPTION
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE(SQLERRM);
+    ROLLBACK;
+END;
+
+
+/
+
+--Replace Xs below with Task 1.5 code
+CREATE OR REPLACE FUNCTION GET_PROD_STRING_FROM_DB (pprodid NUMBER) RETURN VARCHAR2 AS
+  vprodid PRODUCT.PRODID%TYPE;
+  vprodname PRODUCT.PRODNAME%TYPE;
+  vprice PRODUCT.SELLING_PRICE%TYPE;
+  vsalesytd PRODUCT.SALES_YTD%TYPE;
+  vstr VARCHAR2(100);
+BEGIN
+  SELECT PRODID, PRODNAME, SELLING_PRICE, SALES_YTD INTO vprodid, vprodname, vprice, vsalesytd
+  FROM PRODUCT WHERE PRODID = pprodid;
+  vstr := 'Prodid: ' || vprodid || ' Name: ' || vprodname || ' Price: ' || vprice || ' SalesYTD: ' || vsalesytd;
+  RETURN vstr;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    RAISE_APPLICATION_ERROR(-20041, 'Product ID not found');
+  WHEN OTHERS THEN
+    RAISE_APPLICATION_ERROR(-20000, SQLERRM);
+END;
+/
+
+CREATE OR REPLACE PROCEDURE GET_PROD_STRING_VIASQLDEV (pprodid NUMBER) AS
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('---------------------------------------------------------------');
+  DBMS_OUTPUT.PUT_LINE('Getting Details for Prod Id ' || pprodid);
+  DBMS_OUTPUT.PUT_LINE(GET_PROD_STRING_FROM_DB(pprodid));
+EXCEPTION
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE(SQLERRM);
+END;
+/
+
+CREATE OR REPLACE PROCEDURE UPD_PROD_SALESYTD_IN_DB (pprodid NUMBER, pamt NUMBER) AS
+  err_amt EXCEPTION;
+  err_notfound EXCEPTION;
+BEGIN
+  IF pamt < -999.99 OR pamt > 999.99 THEN
+    RAISE err_amt;
+  END IF;
+  
+  UPDATE PRODUCT SET SALES_YTD = SALES_YTD + pamt WHERE PRODID = pprodid;
+  
+  IF SQL%NOTFOUND THEN
+    RAISE err_notfound;
+  END IF;
+EXCEPTION
+  WHEN err_notfound THEN
+    RAISE_APPLICATION_ERROR(-20051, 'Product ID not found');
+  WHEN err_amt THEN
+    RAISE_APPLICATION_ERROR(-20052, 'Amount out of range');
+  WHEN OTHERS THEN
+    RAISE_APPLICATION_ERROR(-20000, SQLERRM);
+END;
+/
+
+CREATE OR REPLACE PROCEDURE UPD_PROD_SALESYTD_VIASQLDEV (pprodid NUMBER, pamt NUMBER) AS
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('---------------------------------------------------------------');
+  DBMS_OUTPUT.PUT_LINE('Updating SalesYTD Product Id: ' || pprodid || ' Amount: ' || pamt);
+  UPD_PROD_SALESYTD_IN_DB(pprodid, pamt);
+  DBMS_OUTPUT.PUT_LINE('Update OK');
+  COMMIT;
+EXCEPTION
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE(SQLERRM);
+    ROLLBACK;
+END;
+/
+
+
+--Replace Xs below with Task 1.6 code
+CREATE OR REPLACE PROCEDURE UPD_CUST_STATUS_IN_DB (pcustid NUMBER, pstatus VARCHAR2) AS
+  err_status EXCEPTION;
+  err_notfound EXCEPTION;
+BEGIN
+  IF UPPER(pstatus) NOT IN ('OK', 'SUSPEND') THEN
+    RAISE err_status;
+  END IF;
+  
+  UPDATE CUSTOMER SET STATUS = pstatus WHERE CUSTID = pcustid;
+  
+  IF SQL%NOTFOUND THEN
+    RAISE err_notfound;
+  END IF;
+EXCEPTION
+  WHEN err_notfound THEN
+    RAISE_APPLICATION_ERROR(-20061, 'Customer ID not found');
+  WHEN err_status THEN
+    RAISE_APPLICATION_ERROR(-20062, 'Invalid Status value');
+  WHEN OTHERS THEN
+    RAISE_APPLICATION_ERROR(-20000, SQLERRM);
+END;
+/
+
+CREATE OR REPLACE PROCEDURE UPD_CUST_STATUS_VIASQLDEV (pcustid NUMBER, pstatus VARCHAR2) AS
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('---------------------------------------------------------------');
+  DBMS_OUTPUT.PUT_LINE('Updating Status. Customer Id: ' || pcustid || ' New Status: ' || pstatus);
+  UPD_CUST_STATUS_IN_DB(pcustid, pstatus);
+  DBMS_OUTPUT.PUT_LINE('Update OK');
+  COMMIT;
+EXCEPTION
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE(SQLERRM);
+    ROLLBACK;
+END;
+/
+
+
+--Replace Xs below with Task 1.7 code
+CREATE OR REPLACE PROCEDURE ADD_SIMPLE_SALE_TO_DB (pcustid NUMBER, pprodid NUMBER, pqty NUMBER) AS
+  vcustid CUSTOMER.CUSTID%TYPE;
+  vstatus CUSTOMER.STATUS%TYPE;
+  vprice PRODUCT.SELLING_PRICE%TYPE;
+  vsale SALE.PRICE%TYPE;
+  vcountcust NUMBER;
+  vcountprod NUMBER;
+
+  err_qty EXCEPTION;
+  err_status EXCEPTION;
+BEGIN
+  SELECT COUNT(*) INTO vcountcust FROM CUSTOMER WHERE CUSTID = pcustid;
+  SELECT CUSTID, STATUS INTO vcustid, vstatus FROM CUSTOMER WHERE CUSTID = pcustid;
+  SELECT COUNT(*) INTO vcountprod FROM PRODUCT WHERE PRODID = pprodid;
+  SELECT SELLING_PRICE INTO vprice FROM PRODUCT WHERE PRODID = pprodid;
+  
+  vsale := vprice * pqty;
+  
+  IF NOT(pqty BETWEEN 1 AND 999) THEN
+    RAISE err_qty;
+  ELSIF NOT UPPER(vstatus) IN ('OK') THEN
+    RAISE err_status;
+  ELSE
+    UPD_CUST_SALESYTD_IN_DB(pcustid, vsale);
+    UPD_PROD_SALESYTD_IN_DB(pprodid, vsale);
+    INSERT INTO SALE (SALEID, CUSTID, PRODID, QTY, PRICE, SALEDATE) VALUES (sale_seq.nextval, pcustid, pprodid, pqty, vsale, sysdate);
+  END IF;
+EXCEPTION
+  WHEN err_qty THEN
+    RAISE_APPLICATION_ERROR(-20071, 'Sale Quantity outside valid range');
+  WHEN err_status THEN
+    RAISE_APPLICATION_ERROR(-20072, 'Customer status is not OK');
+  WHEN NO_DATA_FOUND THEN
+    IF vcountcust = 0 THEN
+      RAISE_APPLICATION_ERROR(-20073, 'Customer ID not found');
+    ELSIF vcountprod = 0 THEN
+      RAISE_APPLICATION_ERROR(-20074, 'Product ID not found');
+    END IF;
+  WHEN OTHERS THEN
+    RAISE_APPLICATION_ERROR(-20000, SQLERRM);
+END;
+/
+
+CREATE OR REPLACE PROCEDURE ADD_SIMPLE_SALE_VIASQLDEV (pcustid NUMBER, pprodid NUMBER, pqty NUMBER) AS
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('---------------------------------------------------------------');
+  DBMS_OUTPUT.PUT_LINE('Adding Simple Sale. Cust Id: ' || pcustid || ' Prod Id ' || pprodid || ' Qty: ' || pqty);
+  ADD_SIMPLE_SALE_TO_DB(pcustid, pprodid, pqty);
+  DBMS_OUTPUT.PUT_LINE('Added Simple Sale OK');
+  COMMIT;
+EXCEPTION
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE(SQLERRM);
+    ROLLBACK;
+END;
+/
+
+
+--Replace Xs below with Task 1.8 code
+CREATE OR REPLACE FUNCTION SUM_CUST_SALESYTD_FROM_DB RETURN NUMBER AS
+  vsalesytd NUMBER;
+BEGIN
+  SELECT SUM(SALES_YTD) INTO vsalesytd FROM CUSTOMER;
+  RETURN vsalesytd;
+EXCEPTION
+  WHEN OTHERS THEN
+    RAISE_APPLICATION_ERROR(-20000, SQLERRM);
+END;
+/
+
+CREATE OR REPLACE PROCEDURE SUM_CUST_SALES_VIASQLDEV AS
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('---------------------------------------------------------------');
+  DBMS_OUTPUT.PUT_LINE('Summing Customer SalesYTD.');
+  DBMS_OUTPUT.PUT_LINE('All Customer Total: ' || SUM_CUST_SALESYTD_FROM_DB);
+  COMMIT;
+EXCEPTION
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE(SQLERRM);
+END;
+/
+
+CREATE OR REPLACE FUNCTION SUM_PROD_SALESYTD_FROM_DB RETURN NUMBER AS
+  vsalesytd NUMBER;
+BEGIN
+  SELECT SUM(SALES_YTD) INTO vsalesytd FROM PRODUCT;
+  RETURN vsalesytd;
+EXCEPTION
+  WHEN OTHERS THEN
+    RAISE_APPLICATION_ERROR(-20000, SQLERRM);
+END;
+/
+
+CREATE OR REPLACE PROCEDURE SUM_PROD_SALES_VIASQLDEV AS
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('---------------------------------------------------------------');
+  DBMS_OUTPUT.PUT_LINE('Summing Product SalesYTD.');
+  DBMS_OUTPUT.PUT_LINE('All Product Total: ' || SUM_PROD_SALESYTD_FROM_DB);
+  COMMIT;
+EXCEPTION
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE(SQLERRM);
+    ROLLBACK;
+END;
+/
+
+
+--Replace Xs below with Task 2.1 code
+CREATE OR REPLACE FUNCTION GET_ALLCUST_FROM_DB RETURN SYS_REFCURSOR AS
+  custcursor SYS_REFCURSOR;
+BEGIN
+  OPEN custcursor FOR SELECT * FROM CUSTOMER;
+  RETURN custcursor;
+END;
+/
+
+CREATE OR REPLACE PROCEDURE GET_ALLCUST_VIASQLDEV AS
+  custcursor SYS_REFCURSOR;
+  custrec CUSTOMER%ROWTYPE;
+  err_notfound EXCEPTION;
+  
+BEGIN
+  custcursor := GET_ALLCUST_FROM_DB;
+  DBMS_OUTPUT.PUT_LINE('---------------------------------------------------------------');
+  DBMS_OUTPUT.PUT_LINE('Listing All Customer Details');
+
+  
+  LOOP
+    FETCH custcursor INTO custrec;
+    EXIT WHEN custcursor%NOTFOUND;
+    DBMS_OUTPUT.PUT_LINE('Custid: ' || custrec.custid || ' Name: ' || custrec.custname || ' Status ' || custrec.status || ' SalesYTD: ' || custrec.sales_ytd);
+  END LOOP;
+  
+  IF custcursor%ROWCOUNT = 0 THEN
+    RAISE err_notfound;
+  END IF;
+EXCEPTION
+  WHEN err_notfound THEN
+    DBMS_OUTPUT.PUT_LINE('No rows found');
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE(SQLERRM);
+END;
+/
+
+CREATE OR REPLACE FUNCTION GET_ALLPROD_FROM_DB RETURN SYS_REFCURSOR AS
+  prodcursor SYS_REFCURSOR;
+BEGIN
+  OPEN prodcursor FOR SELECT * FROM PRODUCT;
+  RETURN prodcursor;
+END;
+/
+
+CREATE OR REPLACE PROCEDURE GET_ALLPROD_VIASQLDEV AS
+  prodcursor SYS_REFCURSOR;
+  prodrec PRODUCT%ROWTYPE;
+  err_notfound EXCEPTION;
+  
+BEGIN
+  prodcursor := GET_ALLPROD_FROM_DB;
+  DBMS_OUTPUT.PUT_LINE('---------------------------------------------------------------');
+  DBMS_OUTPUT.PUT_LINE('Listing All Product Details');
+  
+  LOOP
+    FETCH prodcursor INTO prodrec;
+    EXIT WHEN prodcursor%NOTFOUND;
+    DBMS_OUTPUT.PUT_LINE('Prodid: ' || prodrec.prodid || ' Name: ' || prodrec.prodname || ' Price ' || prodrec.selling_price || ' SalesYTD: ' || prodrec.sales_ytd);
+  END LOOP;
+  
+  IF prodcursor%ROWCOUNT = 0 THEN
+    RAISE err_notfound;
+  END IF;
+EXCEPTION
+  WHEN err_notfound THEN
+    DBMS_OUTPUT.PUT_LINE('No rows found');
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE(SQLERRM);
+END;
+/
+
+
+--Replace Xs below with Task 3.1 code
+CREATE OR REPLACE PROCEDURE ADD_LOCATION_TO_DB (ploccode VARCHAR2, pminqty NUMBER, pmaxqty NUMBER) AS
+BEGIN
+  INSERT INTO LOCATION(LOCID, MINQTY, MAXQTY) VALUES(ploccode, pminqty, pmaxqty);
+EXCEPTION
+  WHEN DUP_VAL_ON_INDEX THEN
+    RAISE_APPLICATION_ERROR(-20081, 'Duplicate Location ID');
+  WHEN OTHERS THEN
+    IF SQLERRM LIKE '%CHECK_LOCID_LENGTH%' OR SQLERRM LIKE '%ORA-12899%' THEN
+      RAISE_APPLICATION_ERROR(-20082, 'Location Code length invalid');
+    ELSIF SQLERRM LIKE '%CHECK_MINQTY_RANGE%' THEN
+      RAISE_APPLICATION_ERROR(-20083, 'Minimum Qty out of range');
+    ELSIF SQLERRM LIKE '%CHECK_MAXQTY_RANGE%' THEN
+      RAISE_APPLICATION_ERROR(-20084, 'Maximum Qty out of range');
+    ELSIF SQLERRM LIKE '%CHECK_MAXQTY_GREATER_MINQTY%' THEN
+      RAISE_APPLICATION_ERROR(-20085, 'Minimum Qty larger than Maximum Qty');
+    ELSE
+      RAISE_APPLICATION_ERROR(-20000, SQLERRM);
+    END IF;
+END;
+/
+
+CREATE OR REPLACE PROCEDURE ADD_LOCATION_VIASQLDEV (ploccode VARCHAR2, pminqty NUMBER, pmaxqty NUMBER) AS
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('---------------------------------------------------------------');
+  DBMS_OUTPUT.PUT_LINE('Adding Location LocCode: ' || ploccode || ' MinQty: ' || pminqty || ' MaxQty: ' || pmaxqty);
+  
+  ADD_LOCATION_TO_DB(ploccode, pminqty, pmaxqty);
+  
+  DBMS_OUTPUT.PUT_LINE('Location Added OK');
+  COMMIT;
+EXCEPTION
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE(SQLERRM);
+    ROLLBACK;
+END;
+/
+
+
+--Replace Xs below with Task 4.1 code
+/*The following procedure below works fine as how the requirements want it to be. 
+However, when there is not Customer ID that is found for specific sale that want to be inserted to SALE table, 
+it still somehow shows error message that is generated by the system. 
+Albeit the pre-defined error message shows up if error for Customer ID not found occurs');
+*/
+CREATE OR REPLACE PROCEDURE ADD_COMPLEX_SALE_TO_DB (pcustid NUMBER, pprodid NUMBER, pqty NUMBER, pdate VARCHAR2) AS
+  vcustid CUSTOMER.CUSTID%TYPE;
+  vstatus CUSTOMER.STATUS%TYPE;
+  vprice PRODUCT.SELLING_PRICE%TYPE;
+  vsale SALE.PRICE%TYPE;
+  vdate VARCHAR2(100);
+  vcountcust NUMBER;
+  vcountprod NUMBER;
+  
+  err_custid EXCEPTION;
+  err_prodid EXCEPTION;
+  err_qty EXCEPTION;
+  err_status EXCEPTION;
+  err_date EXCEPTION;
+BEGIN
+  SELECT COUNT(*) INTO vcountcust FROM CUSTOMER WHERE CUSTID = pcustid;
+  SELECT CUSTID, STATUS INTO vcustid, vstatus FROM CUSTOMER WHERE CUSTID = pcustid; 
+  SELECT COUNT(*) INTO vcountprod FROM PRODUCT WHERE PRODID = pprodid;
+  SELECT SELLING_PRICE INTO vprice FROM PRODUCT WHERE PRODID = pprodid;
+  vdate := CHECK_DATE(pdate);
+  vsale := vprice * pqty;
+  
+  IF pqty < 1 OR pqty > 999 THEN
+    RAISE err_qty;
+  ELSIF NOT UPPER(vstatus) IN ('OK') THEN
+    RAISE err_status;
+  ELSIF vdate = 'INVALID' THEN
+    RAISE err_date;
+  ELSE
+    UPD_CUST_SALESYTD_IN_DB(pcustid, vsale);
+    UPD_PROD_SALESYTD_IN_DB(pprodid, vsale);
+    INSERT INTO SALE (SALEID, CUSTID, PRODID, QTY, PRICE, SALEDATE) VALUES (sale_seq.nextval, pcustid, pprodid, pqty, vsale, vdate);
+  END IF;
+EXCEPTION
+  WHEN err_qty THEN
+    RAISE_APPLICATION_ERROR(-20091, 'Sale Quantity outside valid range');
+  WHEN err_status THEN
+    RAISE_APPLICATION_ERROR(-20092, 'Customer status is not OK');
+  WHEN err_date THEN
+    RAISE_APPLICATION_ERROR(-20093, 'Date not valid');
+  WHEN NO_DATA_FOUND THEN
+    IF vcountcust = 0 THEN
+      RAISE_APPLICATION_ERROR(-20094, 'Customer ID not found');
+    ELSIF vcountprod = 0 THEN
+      RAISE_APPLICATION_ERROR(-20095, 'Product ID not found');
+    END IF;
+  WHEN OTHERS THEN
+      RAISE_APPLICATION_ERROR(-20000, SQLERRM);
+END;
+/
+
+CREATE OR REPLACE PROCEDURE ADD_COMPLEX_SALE_VIASQLDEV (pcustid NUMBER, pprodid NUMBER, pqty NUMBER, pdate VARCHAR2) AS
+  vsale SALE.PRICE%TYPE;
+  vprice PRODUCT.SELLING_PRICE%TYPE;
+BEGIN
+  SELECT SELLING_PRICE INTO vprice FROM PRODUCT WHERE PRODID = pprodid;
+
+  vsale := pqty * vprice;
+
+  DBMS_OUTPUT.PUT_LINE('---------------------------------------------------------------');
+  DBMS_OUTPUT.PUT_LINE('Adding Complex Sale. Cust Id: ' || pcustid || ' Prod Id ' || pprodid || ' Date: ' || pdate || ' Amt: ' || vsale);
+  ADD_COMPLEX_SALE_TO_DB(pcustid, pprodid, pqty, pdate);
+  DBMS_OUTPUT.PUT_LINE('Added Complex Sale OK');
+  COMMIT;
+EXCEPTION
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE(SQLERRM);
+    ROLLBACK;
+END;
+/
+
+CREATE OR REPLACE FUNCTION GET_ALLSALES_FROM_DB RETURN SYS_REFCURSOR AS
+  salecursor SYS_REFCURSOR;
+BEGIN
+  OPEN salecursor FOR SELECT * FROM SALE;
+  RETURN salecursor;
+END;
+/
+
+CREATE OR REPLACE PROCEDURE GET_ALLSALES_VIASQLDEV AS
+  salecursor SYS_REFCURSOR;
+  salesrec SALE%ROWTYPE;
+  err_notfound EXCEPTION;
+
+BEGIN
+  salecursor := GET_ALLSALES_FROM_DB;
+  DBMS_OUTPUT.PUT_LINE('---------------------------------------------------------------');
+  DBMS_OUTPUT.PUT_LINE('Listing All Complex Sales Details');
+  LOOP
+    FETCH salecursor INTO salesrec;
+    EXIT WHEN salecursor%NOTFOUND;
+    DBMS_OUTPUT.PUT_LINE('Saleid: ' || salesrec.saleid || ' Custid: ' || salesrec.custid || ' Prodid: ' || salesrec.prodid || ' Date ' || salesrec.saledate || ' Amount ' || salesrec.price);
+  END LOOP;
+  
+  IF salecursor%ROWCOUNT = 0 THEN
+    RAISE err_notfound;
+  END IF;  
+EXCEPTION
+  WHEN err_notfound THEN
+    DBMS_OUTPUT.PUT_LINE('No rows found');
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE(SQLERRM);
+END;
+/
+
+CREATE OR REPLACE FUNCTION COUNT_PRODUCT_SALES_FROM_DB (pdays NUMBER) RETURN NUMBER AS
+  vtotalsale NUMBER;
+  vdate DATE;
+BEGIN
+  SELECT SYSDATE-pdays INTO vdate FROM DUAL;
+  SELECT COUNT(*) INTO vtotalsale FROM SALE WHERE SALEDATE <= SYSDATE AND SALEDATE >= vdate;
+  RETURN vtotalsale;
+EXCEPTION
+  WHEN OTHERS THEN
+    RAISE_APPLICATION_ERROR(-20000, SQLERRM);
+END;
+/
+
+CREATE OR REPLACE PROCEDURE COUNT_PRODUCT_SALES_VIASQLDEV (pdays NUMBER) AS
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('---------------------------------------------------------------');
+  DBMS_OUTPUT.PUT_LINE('Counting sales within ' || pdays || ' days');
+  DBMS_OUTPUT.PUT_LINE('Total number of sales: ' || COUNT_PRODUCT_SALES_FROM_DB(pdays));
+EXCEPTION
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE(SQLERRM);
+    ROLLBACK;
+END;
+/
+
+
+--Replace Xs below with Task 5.1 code
+CREATE OR REPLACE FUNCTION DELETE_SALE_FROM_DB RETURN NUMBER AS
+  vsaleid SALE.SALEID%TYPE;
+  vcustid SALE.CUSTID%TYPE;
+  vprodid SALE.PRODID%TYPE;
+  vprice SALE.PRICE%TYPE;
+  
+  err_nosalerows EXCEPTION;
+BEGIN
+  SELECT SALEID, CUSTID, PRODID, PRICE INTO vsaleid, vcustid, vprodid, vprice FROM SALE WHERE SALEID = (SELECT MIN(SALEID) FROM SALE);
+  IF SQL%NOTFOUND THEN
+    RAISE err_nosalerows;
+  END IF;
+  
+  DELETE FROM SALE WHERE SALEID = (SELECT MIN(SALEID) FROM SALE);
+  UPD_CUST_SALESYTD_IN_DB(vcustid, vprice * -1);
+  UPD_PROD_SALESYTD_IN_DB(vprodid, vprice * -1);
+  RETURN vsaleid;
+
+EXCEPTION
+  WHEN err_nosalerows THEN
+    RAISE_APPLICATION_ERROR(-20101,'No Sale Rows Found');
+  WHEN OTHERS THEN
+    RAISE_APPLICATION_ERROR(-20000, SQLERRM);
+END;
+/
+
+CREATE OR REPLACE PROCEDURE DELETE_SALE_VIASQLDEV AS
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('---------------------------------------------------------------');
+  DBMS_OUTPUT.PUT_LINE('Deleting Sale with smallest SaleId value');
+  DBMS_OUTPUT.PUT_LINE('Deleted Sale OK. SaleID: ' || DELETE_SALE_FROM_DB);
+EXCEPTION
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE(SQLERRM);
+END;
+/
+
+CREATE OR REPLACE PROCEDURE DELETE_ALL_SALES_FROM_DB AS
+BEGIN
+  DELETE FROM SALE;
+  UPDATE CUSTOMER SET SALES_YTD = 0;
+  UPDATE PRODUCT SET SALES_YTD = 0;
+EXCEPTION
+  WHEN OTHERS THEN
+    RAISE_APPLICATION_ERROR(-20000, SQLERRM);
+END;
+/
+
+CREATE OR REPLACE PROCEDURE DELETE_ALL_SALES_VIASQLDEV AS
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('---------------------------------------------------------------');
+  DBMS_OUTPUT.PUT_LINE('Deleting all Sales data in Sale, Customer, and Product tables');
+  DELETE_ALL_SALES_FROM_DB;
+  DBMS_OUTPUT.PUT_LINE('Deleted OK.');
+EXCEPTION
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE(SQLERRM);
+END;
+/
+
+
+--Replace Xs below with Task 6.1 code
+CREATE OR REPLACE PROCEDURE DELETE_CUSTOMER_FROM_DB(pCustid NUMBER) AS
+  err_notfound EXCEPTION;
+BEGIN
+  DELETE FROM CUSTOMER WHERE CUSTID = pCustid;
+  IF SQL%NOTFOUND THEN
+    RAISE err_notfound;
+  END IF;
+EXCEPTION
+  WHEN err_notfound THEN
+    RAISE_APPLICATION_ERROR(-20201, 'Customer ID not found');
+  WHEN OTHERS THEN
+    IF SQLERRM LIKE '%integrity constraint%' THEN
+      RAISE_APPLICATION_ERROR(-20202, 'Customer cannot be deleted as sales exist');
+    ELSE
+      RAISE_APPLICATION_ERROR(-20000, SQLERRM);
+    END IF;
+END;
+/
+
+CREATE OR REPLACE PROCEDURE DELETE_CUSTOMER_VIASQLDEV(pCustid NUMBER) AS
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('---------------------------------------------------------------');
+  DBMS_OUTPUT.PUT_LINE('Deleting Customer. Cust Id: ' || pCustid);
+  DELETE_CUSTOMER_FROM_DB(pCustid);
+  DBMS_OUTPUT.PUT_LINE('Deleted CUSTOMER OK.');
+EXCEPTION
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE(SQLERRM);
+END;
+/
+
+CREATE OR REPLACE PROCEDURE DELETE_PROD_FROM_DB(pProdid NUMBER) AS
+  err_notfound EXCEPTION;
+BEGIN
+  DELETE FROM PRODUCT WHERE PRODID = pProdid;
+  IF SQL%NOTFOUND THEN
+    RAISE err_notfound;
+  END IF;
+EXCEPTION
+  WHEN err_notfound THEN
+    RAISE_APPLICATION_ERROR(-20201, 'Product ID not found');
+  WHEN OTHERS THEN
+    IF SQLERRM LIKE '%integrity constraint%' THEN
+      RAISE_APPLICATION_ERROR(-20302, 'Product cannot be deleted as sales exist');
+    ELSE
+      RAISE_APPLICATION_ERROR(-20000, SQLERRM);
+    END IF;
+END;
+/
+
+CREATE OR REPLACE PROCEDURE DELETE_PROD_VIASQLDEV(pProdid NUMBER) AS
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('---------------------------------------------------------------');
+  DBMS_OUTPUT.PUT_LINE('Deleting Product. Product Id: ' || pProdid);
+  DELETE_PROD_FROM_DB(pProdid);
+  DBMS_OUTPUT.PUT_LINE('Deleted Product OK.');
+EXCEPTION
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE(SQLERRM);
+END;
+/
+
+--Replace Xs below with Task 8 code
+CREATE OR REPLACE PACKAGE GET_ALLCUST_FROM_DB_PCKG AS
+  TYPE custcursor IS REF CURSOR;
+  PROCEDURE GET_ALLCUST_FROM_DB (pcustcursor OUT custcursor);
+END GET_ALLCUST_FROM_DB_PCKG;
+/
+
+CREATE OR REPLACE PACKAGE BODY GET_ALLCUST_FROM_DB_PCKG IS
+  PROCEDURE GET_ALLCUST_FROM_DB (pcustcursor OUT custcursor) AS
+    vcustcursor custcursor;
+  BEGIN
+    OPEN vcustcursor FOR SELECT * FROM CUSTOMER;
+    pcustcursor := vcustcursor;
+  END;
+END GET_ALLCUST_FROM_DB_PCKG;
+/
+
+CREATE OR REPLACE PACKAGE GET_ALLPROD_FROM_DB_PCKG AS
+  TYPE prodcursor IS REF CURSOR;
+  PROCEDURE GET_ALLPROD_FROM_DB (pprodcursor OUT prodcursor);
+END GET_ALLPROD_FROM_DB_PCKG;
+/
+
+CREATE OR REPLACE PACKAGE BODY GET_ALLPROD_FROM_DB_PCKG IS
+  PROCEDURE GET_ALLPROD_FROM_DB (pprodcursor OUT prodcursor) AS
+    vprodcursor prodcursor;
+  BEGIN
+    OPEN vprodcursor FOR SELECT * FROM PRODUCT;
+    pprodcursor := vprodcursor;
+  END;
+END GET_ALLPROD_FROM_DB_PCKG;
+/
+
+--Replace Xs below with Task 9 code
+CREATE OR REPLACE PACKAGE GET_ALLSALES_FROM_DB_PCKG AS
+  TYPE salescursor IS REF CURSOR;
+  PROCEDURE GET_ALLSALES_FROM_DB (psalescursor OUT salescursor);
+END GET_ALLSALES_FROM_DB_PCKG;
+/
+
+CREATE OR REPLACE PACKAGE BODY GET_ALLSALES_FROM_DB_PCKG IS
+  PROCEDURE GET_ALLSALES_FROM_DB (psalescursor OUT salescursor) AS
+    vsalescursor salescursor;
+  BEGIN
+    OPEN vsalescursor FOR SELECT * FROM SALE;
+    psalescursor := vsalescursor;
+  END;
+END GET_ALLSALES_FROM_DB_PCKG;
+/

@@ -1,0 +1,433 @@
+table SALE dropped.
+table PRODUCT dropped.
+table CUSTOMER dropped.
+table LOCATION dropped.
+table CUSTOMER created.
+table PRODUCT created.
+table SALE created.
+table LOCATION created.
+sequence SALE_SEQ dropped.
+sequence SALE_SEQ created.
+PROCEDURE ADD_CUSTOMER_TO_DB compiled
+PROCEDURE ADD_CUSTOMER_VIASQLDEV compiled
+FUNCTION DELETE_ALL_CUSTOMERS_FROM_DB compiled
+PROCEDURE DELETE_ALL_CUSTOMERS_VIASQLDEV compiled
+PROCEDURE ADD_PRODUCT_TO_DB compiled
+PROCEDURE ADD_PRODUCT_VIASQLDEV compiled
+FUNCTION DELETE_ALL_PRODUCTS_FROM_DB compiled
+PROCEDURE DELETE_ALL_PRODUCTS_VIASQLDEV compiled
+FUNCTION GET_CUST_STRING_FROM_DB compiled
+PROCEDURE GET_CUST_STRING_VIASQLDEV compiled
+PROCEDURE UPD_CUST_SALESYTD_IN_DB compiled
+PROCEDURE UPD_CUST_SALESYTD_VIASQLDEV compiled
+FUNCTION GET_PROD_STRING_FROM_DB compiled
+PROCEDURE GET_PROD_STRING_VIASQLDEV compiled
+PROCEDURE UPD_PROD_SALESYTD_IN_DB compiled
+PROCEDURE UPD_PROD_SALESYTD_VIASQLDEV compiled
+PROCEDURE UPD_CUST_STATUS_IN_DB compiled
+PROCEDURE UPD_CUST_STATUS_VIASQLDEV compiled
+PROCEDURE ADD_SIMPLE_SALE_TO_DB compiled
+PROCEDURE ADD_SIMPLE_SALE_VIASQLDEV compiled
+FUNCTION SUM_CUST_SALESYTD_FROM_DB compiled
+PROCEDURE SUM_CUST_SALES_VIASQLDEV compiled
+FUNCTION SUM_PROD_SALESYTD_FROM_DB compiled
+PROCEDURE SUM_PROD_SALES_VIASQLDEV compiled
+FUNCTION GET_ALLCUST_FROM_DB compiled
+PROCEDURE GET_ALLCUST_VIASQLDEV compiled
+FUNCTION GET_ALLPROD_FROM_DB compiled
+PROCEDURE GET_ALLPROD_VIASQLDEV compiled
+PROCEDURE ADD_LOCATION_TO_DB compiled
+PROCEDURE ADD_LOCATION_VIASQLDEV compiled
+PROCEDURE ADD_COMPLEX_SALE_TO_DB compiled
+PROCEDURE ADD_COMPLEX_SALE_VIASQLDEV compiled
+FUNCTION GET_ALLSALES_FROM_DB compiled
+PROCEDURE GET_ALLSALES_VIASQLDEV compiled
+FUNCTION COUNT_PRODUCT_SALES_FROM_DB compiled
+PROCEDURE COUNT_PRODUCT_SALES_VIASQLDEV compiled
+FUNCTION DELETE_SALE_FROM_DB compiled
+PROCEDURE DELETE_SALE_VIASQLDEV compiled
+PROCEDURE DELETE_ALL_SALES_FROM_DB compiled
+PROCEDURE DELETE_ALL_SALES_VIASQLDEV compiled
+PROCEDURE DELETE_CUSTOMER_FROM_DB compiled
+PROCEDURE DELETE_CUSTOMER_VIASQLDEV compiled
+PROCEDURE DELETE_PROD_FROM_DB compiled
+PROCEDURE DELETE_PROD_VIASQLDEV compiled
+PACKAGE GET_ALLCUST_FROM_DB_PCKG compiled
+PACKAGE BODY GET_ALLCUST_FROM_DB_PCKG compiled
+PACKAGE GET_ALLPROD_FROM_DB_PCKG compiled
+PACKAGE BODY GET_ALLPROD_FROM_DB_PCKG compiled
+PACKAGE GET_ALLSALES_FROM_DB_PCKG compiled
+PACKAGE BODY GET_ALLSALES_FROM_DB_PCKG compiled
+anonymous block completed
+Student ID: 700513X
+---------------------------------------------------------------
+Deleting all Sales data in Sale, Customer, and Product tables
+Deleted OK.
+---------------------------------------------------------------
+Deleting all Customer rows
+0 rows deleted
+---------------------------------------------------------------
+Deleting all Products rows
+0 rows deleted
+==========TEST ADD CUSTOMERS ==========================
+---------------------------------------------------------------
+Adding Customer. ID: 1 Name: Colin Smith
+Customer Added OK
+---------------------------------------------------------------
+Adding Customer. ID: 2 Name: Jill Davis
+Customer Added OK
+---------------------------------------------------------------
+Adding Customer. ID: 3 Name: Dave Brown
+Customer Added OK
+---------------------------------------------------------------
+Adding Customer. ID: 4 Name: Kirsty Glass
+Customer Added OK
+---------------------------------------------------------------
+Adding Customer. ID: 1 Name: Jenny Nighy
+ORA-20001: Duplicate Customer ID
+---------------------------------------------------------------
+Adding Customer. ID: -3 Name: Emma Jones
+ORA-20002: Customer ID out of range
+---------------------------------------------------------------
+Adding Customer. ID: 666 Name: Peter White
+ORA-20002: Customer ID out of range
+==========TEST ADD PRODUCTS==========================
+---------------------------------------------------------------
+Adding Product. ID: 1001 Name: ProdA Price: 10
+Product Added OK
+---------------------------------------------------------------
+Adding Product. ID: 1002 Name: ProdB Price: 20
+Product Added OK
+---------------------------------------------------------------
+Adding Product. ID: 1003 Name: ProdC Price: 35
+Product Added OK
+---------------------------------------------------------------
+Adding Product. ID: 1001 Name: ProdD Price: 10
+ORA-20011: Duplicate product ID
+---------------------------------------------------------------
+Adding Product. ID: 3333 Name: ProdD Price: 100
+ORA-20012: Product ID out of range
+---------------------------------------------------------------
+Adding Product. ID: 1004 Name: ProdD Price: 1234
+ORA-20013: Price out of range
+===========TEST STATUS UPDATES ==========================
+---------------------------------------------------------------
+Updating Status. Customer Id: 3 New Status: SUSPEND
+Update OK
+---------------------------------------------------------------
+Updating Status. Customer Id: 4 New Status: QWERTY
+ORA-20062: Invalid Status value
+===========TEST CUSTOMER RETREIVAL ==========================
+---------------------------------------------------------------
+Getting Details for CustId 1
+Custid: 1 Name: Colin Smith Status: OK SalesYTD: 0
+---------------------------------------------------------------
+Getting Details for CustId 2
+Custid: 2 Name: Jill Davis Status: OK SalesYTD: 0
+---------------------------------------------------------------
+Getting Details for CustId 22
+ORA-20021: Customer ID not found
+===========TEST PRODUCT RETREIVAL ==========================
+---------------------------------------------------------------
+Getting Details for Prod Id 1001
+Prodid: 1001 Name: ProdA Price: 10 SalesYTD: 0
+---------------------------------------------------------------
+Getting Details for Prod Id 1002
+Prodid: 1002 Name: ProdB Price: 20 SalesYTD: 0
+---------------------------------------------------------------
+Getting Details for Prod Id 2222
+ORA-20041: Product ID not found
+===========TEST SIMPLE SALES ==========================
+---------------------------------------------------------------
+Adding Simple Sale. Cust Id: 1 Prod Id 1001 Qty: 15
+Added Simple Sale OK
+---------------------------------------------------------------
+Adding Simple Sale. Cust Id: 2 Prod Id 1002 Qty: 37
+Added Simple Sale OK
+---------------------------------------------------------------
+Adding Simple Sale. Cust Id: 3 Prod Id 1002 Qty: 15
+ORA-20072: Customer status is not OK
+---------------------------------------------------------------
+Adding Simple Sale. Cust Id: 4 Prod Id 1001 Qty: 100
+ORA-20000: ORA-20032: Amount out of range
+---------------------------------------------------------------
+Summing Customer SalesYTD.
+All Customer Total: 890
+---------------------------------------------------------------
+Summing Product SalesYTD.
+All Product Total: 890
+===========MORE TESTING OF SIMPLE SALES ==========================
+---------------------------------------------------------------
+Adding Simple Sale. Cust Id: 99 Prod Id 1002 Qty: 60
+ORA-20073: Customer ID not found
+---------------------------------------------------------------
+Adding Simple Sale. Cust Id: 2 Prod Id 5555 Qty: 60
+ORA-20074: Product ID not found
+---------------------------------------------------------------
+Adding Simple Sale. Cust Id: 1 Prod Id 1002 Qty: 6666
+ORA-20071: Sale Quantity outside valid range
+---------------------------------------------------------------
+Summing Customer SalesYTD.
+All Customer Total: 890
+---------------------------------------------------------------
+Summing Product SalesYTD.
+All Product Total: 890
+==========LIST ALL CUSTOMERS AND PRODUCTS==========================
+---------------------------------------------------------------
+Getting Details for CustId 1
+Custid: 1 Name: Colin Smith Status: OK SalesYTD: 150
+---------------------------------------------------------------
+Getting Details for CustId 2
+Custid: 2 Name: Jill Davis Status: OK SalesYTD: 740
+---------------------------------------------------------------
+Getting Details for CustId 3
+Custid: 3 Name: Dave Brown Status: SUSPEND SalesYTD: 0
+---------------------------------------------------------------
+Getting Details for CustId 4
+Custid: 4 Name: Kirsty Glass Status: OK SalesYTD: 0
+---------------------------------------------------------------
+Getting Details for Prod Id 1001
+Prodid: 1001 Name: ProdA Price: 10 SalesYTD: 150
+---------------------------------------------------------------
+Getting Details for Prod Id 1002
+Prodid: 1002 Name: ProdB Price: 20 SalesYTD: 740
+---------------------------------------------------------------
+Getting Details for Prod Id 1003
+Prodid: 1003 Name: ProdC Price: 35 SalesYTD: 0
+
+anonymous block completed
+Student ID: 700513X
+==========PART 2 TEST CURSOR==========================
+---------------------------------------------------------------
+Listing All Customer Details
+Custid: 1 Name: Colin Smith Status OK SalesYTD: 150
+Custid: 2 Name: Jill Davis Status OK SalesYTD: 740
+Custid: 3 Name: Dave Brown Status SUSPEND SalesYTD: 0
+Custid: 4 Name: Kirsty Glass Status OK SalesYTD: 0
+---------------------------------------------------------------
+Listing All Product Details
+Prodid: 1001 Name: ProdA Price 10 SalesYTD: 150
+Prodid: 1002 Name: ProdB Price 20 SalesYTD: 740
+Prodid: 1003 Name: ProdC Price 35 SalesYTD: 0
+
+anonymous block completed
+Student ID: 700513X
+==========PART 3 TEST LOCATIONS==========================
+---------------------------------------------------------------
+Adding Location LocCode: AF201 MinQty: 1 MaxQty: 2
+Location Added OK
+---------------------------------------------------------------
+Adding Location LocCode: AF202 MinQty: -3 MaxQty: 4
+ORA-20083: Minimum Qty out of range
+---------------------------------------------------------------
+Adding Location LocCode: AF203 MinQty: 5 MaxQty: 1
+ORA-20000: ORA-02290: check constraint (S700513X.CHECK_MAXQTY_GREATER_MIXQTY) violated
+---------------------------------------------------------------
+Adding Location LocCode: AF204 MinQty: 6 MaxQty: 7000
+ORA-20084: Maximum Qty out of range
+---------------------------------------------------------------
+Adding Location LocCode: AF20111 MinQty: 8 MaxQty: 9
+ORA-20082: Location Code length invalid
+
+anonymous block completed
+Student ID: 700513X
+==========PART 4==========================
+---------------------------------------------------------------
+Adding Customer. ID: 10 Name: Mieko Hayashi
+Customer Added OK
+---------------------------------------------------------------
+Adding Customer. ID: 11 Name: John Kalia
+Customer Added OK
+---------------------------------------------------------------
+Adding Customer. ID: 12 Name: Alex Kim
+Customer Added OK
+---------------------------------------------------------------
+Adding Product. ID: 2001 Name: Chair Price: 10
+Product Added OK
+---------------------------------------------------------------
+Adding Product. ID: 2002 Name: Table Price: 45
+Product Added OK
+---------------------------------------------------------------
+Adding Product. ID: 2003 Name: Lamp Price: 22
+Product Added OK
+---------------------------------------------------------------
+Adding Complex Sale. Cust Id: 10 Prod Id 2001 Date: 20140301 Amt: 60
+Added Complex Sale OK
+---------------------------------------------------------------
+Adding Complex Sale. Cust Id: 10 Prod Id 2002 Date: 20140320 Amt: 45
+Added Complex Sale OK
+---------------------------------------------------------------
+Adding Complex Sale. Cust Id: 11 Prod Id 2001 Date: 20140301 Amt: 10
+Added Complex Sale OK
+---------------------------------------------------------------
+Adding Complex Sale. Cust Id: 11 Prod Id 2003 Date: 20140215 Amt: 44
+Added Complex Sale OK
+---------------------------------------------------------------
+Adding Complex Sale. Cust Id: 12 Prod Id 2001 Date: 20140131 Amt: 100
+Added Complex Sale OK
+---------------------------------------------------------------
+Counting sales within 100 days
+Total number of sales: 7
+---------------------------------------------------------------
+Listing All Complex Sales Details
+Saleid: 1 Custid: 1 Prodid: 1001 Date 05/MAY/14 Amount 150
+Saleid: 2 Custid: 2 Prodid: 1002 Date 05/MAY/14 Amount 740
+Saleid: 3 Custid: 10 Prodid: 2001 Date 01/MAR/14 Amount 60
+Saleid: 4 Custid: 10 Prodid: 2002 Date 20/MAR/14 Amount 45
+Saleid: 5 Custid: 11 Prodid: 2001 Date 01/MAR/14 Amount 10
+Saleid: 6 Custid: 11 Prodid: 2003 Date 15/FEB/14 Amount 44
+Saleid: 7 Custid: 12 Prodid: 2001 Date 31/JAN/14 Amount 100
+---------------------------------------------------------------
+Adding Complex Sale. Cust Id: 99 Prod Id 2001 Date: 20140131 Amt: 100
+ORA-20094: Customer ID not found
+ORA-01403: no data found
+---------------------------------------------------------------
+Adding Complex Sale. Cust Id: 12 Prod Id 2001 Date: 20140131 Amt: 99990
+ORA-20091: Sale Quantity outside valid range
+---------------------------------------------------------------
+Adding Complex Sale. Cust Id: 12 Prod Id 2001 Date: 99999999 Amt: 100
+ORA-20093: Date not valid
+---------------------------------------------------------------
+Updating Status. Customer Id: 12 New Status: SUSPEND
+Update OK
+---------------------------------------------------------------
+Adding Complex Sale. Cust Id: 12 Prod Id 2002 Date: 20140131 Amt: 450
+ORA-20092: Customer status is not OK
+
+anonymous block completed
+Student ID: 700513X
+==========PART 5==========================
+---------------------------------------------------------------
+Adding Customer. ID: 10 Name: Mieko Hayashi
+ORA-20001: Duplicate Customer ID
+---------------------------------------------------------------
+Adding Customer. ID: 11 Name: John Kalia
+ORA-20001: Duplicate Customer ID
+---------------------------------------------------------------
+Adding Customer. ID: 12 Name: Alex Kim
+ORA-20001: Duplicate Customer ID
+---------------------------------------------------------------
+Adding Product. ID: 2001 Name: Chair Price: 10
+ORA-20011: Duplicate product ID
+---------------------------------------------------------------
+Adding Product. ID: 2002 Name: Table Price: 45
+ORA-20011: Duplicate product ID
+---------------------------------------------------------------
+Adding Product. ID: 2003 Name: Lamp Price: 22
+ORA-20011: Duplicate product ID
+---------------------------------------------------------------
+Adding Complex Sale. Cust Id: 10 Prod Id 2001 Date: 20140301 Amt: 60
+Added Complex Sale OK
+---------------------------------------------------------------
+Adding Complex Sale. Cust Id: 10 Prod Id 2002 Date: 20140320 Amt: 45
+Added Complex Sale OK
+---------------------------------------------------------------
+Adding Complex Sale. Cust Id: 11 Prod Id 2001 Date: 20140301 Amt: 10
+Added Complex Sale OK
+---------------------------------------------------------------
+Adding Complex Sale. Cust Id: 11 Prod Id 2003 Date: 20140215 Amt: 44
+Added Complex Sale OK
+---------------------------------------------------------------
+Adding Complex Sale. Cust Id: 12 Prod Id 2001 Date: 20140131 Amt: 100
+ORA-20092: Customer status is not OK
+---------------------------------------------------------------
+Counting sales within 100 days
+Total number of sales: 11
+---------------------------------------------------------------
+Listing All Complex Sales Details
+Saleid: 1 Custid: 1 Prodid: 1001 Date 05/MAY/14 Amount 150
+Saleid: 2 Custid: 2 Prodid: 1002 Date 05/MAY/14 Amount 740
+Saleid: 3 Custid: 10 Prodid: 2001 Date 01/MAR/14 Amount 60
+Saleid: 4 Custid: 10 Prodid: 2002 Date 20/MAR/14 Amount 45
+Saleid: 5 Custid: 11 Prodid: 2001 Date 01/MAR/14 Amount 10
+Saleid: 6 Custid: 11 Prodid: 2003 Date 15/FEB/14 Amount 44
+Saleid: 7 Custid: 12 Prodid: 2001 Date 31/JAN/14 Amount 100
+Saleid: 8 Custid: 10 Prodid: 2001 Date 01/MAR/14 Amount 60
+Saleid: 9 Custid: 10 Prodid: 2002 Date 20/MAR/14 Amount 45
+Saleid: 10 Custid: 11 Prodid: 2001 Date 01/MAR/14 Amount 10
+Saleid: 11 Custid: 11 Prodid: 2003 Date 15/FEB/14 Amount 44
+---------------------------------------------------------------
+Deleting Sale with smallest SaleId value
+Deleted Sale OK. SaleID: 1
+---------------------------------------------------------------
+Listing All Complex Sales Details
+Saleid: 2 Custid: 2 Prodid: 1002 Date 05/MAY/14 Amount 740
+Saleid: 3 Custid: 10 Prodid: 2001 Date 01/MAR/14 Amount 60
+Saleid: 4 Custid: 10 Prodid: 2002 Date 20/MAR/14 Amount 45
+Saleid: 5 Custid: 11 Prodid: 2001 Date 01/MAR/14 Amount 10
+Saleid: 6 Custid: 11 Prodid: 2003 Date 15/FEB/14 Amount 44
+Saleid: 7 Custid: 12 Prodid: 2001 Date 31/JAN/14 Amount 100
+Saleid: 8 Custid: 10 Prodid: 2001 Date 01/MAR/14 Amount 60
+Saleid: 9 Custid: 10 Prodid: 2002 Date 20/MAR/14 Amount 45
+Saleid: 10 Custid: 11 Prodid: 2001 Date 01/MAR/14 Amount 10
+Saleid: 11 Custid: 11 Prodid: 2003 Date 15/FEB/14 Amount 44
+---------------------------------------------------------------
+Deleting Sale with smallest SaleId value
+Deleted Sale OK. SaleID: 2
+---------------------------------------------------------------
+Listing All Complex Sales Details
+Saleid: 3 Custid: 10 Prodid: 2001 Date 01/MAR/14 Amount 60
+Saleid: 4 Custid: 10 Prodid: 2002 Date 20/MAR/14 Amount 45
+Saleid: 5 Custid: 11 Prodid: 2001 Date 01/MAR/14 Amount 10
+Saleid: 6 Custid: 11 Prodid: 2003 Date 15/FEB/14 Amount 44
+Saleid: 7 Custid: 12 Prodid: 2001 Date 31/JAN/14 Amount 100
+Saleid: 8 Custid: 10 Prodid: 2001 Date 01/MAR/14 Amount 60
+Saleid: 9 Custid: 10 Prodid: 2002 Date 20/MAR/14 Amount 45
+Saleid: 10 Custid: 11 Prodid: 2001 Date 01/MAR/14 Amount 10
+Saleid: 11 Custid: 11 Prodid: 2003 Date 15/FEB/14 Amount 44
+---------------------------------------------------------------
+Deleting all Sales data in Sale, Customer, and Product tables
+Deleted OK.
+---------------------------------------------------------------
+Listing All Complex Sales Details
+No rows found
+
+anonymous block completed
+Student ID: 700513X
+==========PART 6==========================
+---------------------------------------------------------------
+Adding Customer. ID: 17 Name: Stephen Ward
+Customer Added OK
+---------------------------------------------------------------
+Adding Customer. ID: 18 Name: Lisa Church
+Customer Added OK
+---------------------------------------------------------------
+Adding Customer. ID: 19 Name: Joel Pairman
+Customer Added OK
+---------------------------------------------------------------
+Adding Product. ID: 2005 Name: Desk Price: 195
+Product Added OK
+---------------------------------------------------------------
+Adding Product. ID: 2006 Name: Footrest Price: 20
+Product Added OK
+---------------------------------------------------------------
+Adding Product. ID: 2007 Name: Bookcase Price: 85
+Product Added OK
+---------------------------------------------------------------
+Adding Complex Sale. Cust Id: 17 Prod Id 2005 Date: 20140302 Amt: 195
+Added Complex Sale OK
+---------------------------------------------------------------
+Adding Complex Sale. Cust Id: 17 Prod Id 2006 Date: 20140303 Amt: 20
+Added Complex Sale OK
+---------------------------------------------------------------
+Adding Complex Sale. Cust Id: 19 Prod Id 2005 Date: 20140304 Amt: 195
+Added Complex Sale OK
+---------------------------------------------------------------
+Deleting Customer. Cust Id: 17
+ORA-20202: Customer cannot be deleted as sales exist
+---------------------------------------------------------------
+Deleting Customer. Cust Id: 18
+Deleted CUSTOMER OK.
+---------------------------------------------------------------
+Deleting Customer. Cust Id: 19
+ORA-20202: Customer cannot be deleted as sales exist
+---------------------------------------------------------------
+Deleting Product. Product Id: 2005
+ORA-20302: Product cannot be deleted as sales exist
+---------------------------------------------------------------
+Deleting Product. Product Id: 2006
+ORA-20302: Product cannot be deleted as sales exist
+---------------------------------------------------------------
+Deleting Product. Product Id: 2007
+Deleted Product OK.
+

@@ -1,0 +1,148 @@
+table GENDERSPELLING dropped.
+table ERROREVENT dropped.
+sequence ERROREVENTSEQ dropped.
+table DWPROD dropped.
+sequence DWPRODSEQ dropped.
+table DWCUST dropped.
+sequence DWCUSTSEQ dropped.
+table DWSALE dropped.
+sequence DWSALESEQ dropped.
+sequence ERROREVENTSEQ created.
+sequence DWPRODSEQ created.
+sequence DWCUSTSEQ created.
+sequence DWSALESEQ created.
+table GENDERSPELLING created.
+table ERROREVENT created.
+table DWPROD created.
+table DWCUST created.
+table DWSALE created.
+9 rows inserted.
+view VIEW_SALES created.
+FUNCTION SF_GET_MOST_RECENT_PRICE compiled
+PROCEDURE SP_CLEAN_PRODUCT compiled
+PROCEDURE SP_UPLOAD_PRODUCT compiled
+anonymous block completed
+PROCEDURE SP_CLEAN_CUST_BRIS compiled
+PROCEDURE SP_UPLOAD_CUSTOMER_BRIS compiled
+anonymous block completed
+PROCEDURE SP_CLEAN_SALES_BRIS compiled
+PROCEDURE SP_UPLOAD_SALE_BRIS compiled
+anonymous block completed
+PROCEDURE SP_CLEAN_CUST_MELB compiled
+PROCEDURE SP_UPLOAD_CUSTOMER_MELB compiled
+PROCEDURE SP_CLEAN_SALES_MELB compiled
+PROCEDURE SP_UPLOAD_SALE_MELB compiled
+anonymous block completed
+***** QUERY 1 Filter count *****
+  FILTERID ACTION   COUNT(*)
+---------- ------ ----------
+         1 MODIFY          2 
+         2 MODIFY         11 
+         3 MODIFY         18 
+         4 MODIFY         11 
+         5 SKIP            7 
+         6 SKIP         4158 
+         7 MODIFY          8 
+         8 MODIFY          8 
+         9 MODIFY         14 
+        10 SKIP            8 
+        11 SKIP            8 
+        12 MODIFY         10 
+        13 MODIFY         26 
+
+ 13 rows selected 
+
+***** QUERY 2 DW Row Count *****
+TABLE_NAME                      ROW_COUNT
+------------------------------ ----------
+DWCUST                               8816 
+DWPROD                                100 
+DWSALE                              23796 
+
+***** QUERY 3 Weekday sales *****
+WEEKDAY   TOTAL SALES
+--------- -----------
+MONDAY         312800 
+TUESDAY        302557 
+THURSDAY       299653 
+SUNDAY         298122 
+WEDNESDAY      296677 
+SATURDAY       293277 
+FRIDAY         277080 
+
+ 7 rows selected 
+
+***** QUERY 4 Customer Category Sales*****
+CUSTCATNAME                                                                                          TOTAL SALES
+---------------------------------------------------------------------------------------------------- -----------
+UNKNOWN                                                                                                     4079 
+Gold                                                                                                      391515 
+Silver                                                                                                    408153 
+Advantage                                                                                                 411385 
+Normal                                                                                                    421480 
+Exclusive                                                                                                 443554 
+
+ 6 rows selected 
+
+***** QUERY 5 Sales by Manufacturer*****
+PRODMANUNAME                                                                                         TOTAL SALES
+---------------------------------------------------------------------------------------------------- -----------
+Island Group                                                                                                5278 
+Creative Wares                                                                                              4828 
+Lum-Tech                                                                                                    4354 
+A1 Plus Goods                                                                                               4174 
+InnerGroup International                                                                                    4122 
+MasterSpec Innovators                                                                                       3445 
+Eagle Products                                                                                              3189 
+Enriched Concepts                                                                                           2386 
+Snap Optix & Technology                                                                                     2301 
+Great Aussie Building Products                                                                              1858 
+
+ 10 rows selected 
+
+***** QUERY 6 Top 10 Customers *****
+  DWCUSTID FIRSTNAME            SURNAME              TOTAL SALES
+---------- -------------------- -------------------- -----------
+      1362 Sheryl               Lyle                        2083 
+      3322 Mark                 Unger                       1973 
+      3348 Carlos               Pheng                       1917 
+      6515 Richard              Long                        1731 
+      2686 Clive                Nawar                       1649 
+       978 Cher                 Thompson                    1614 
+       502 Jennifer             Ortiz                       1586 
+       779 Joanne               Boys                        1567 
+      1171 Victoria             Agopian                     1546 
+      2522 Jason                Nunez                       1545 
+
+ 10 rows selected 
+
+***** QUERY 7 Bottom 10 products *****
+  DWPRODID PRODNAME                                                                                             TOTAL SALES
+---------- ---------------------------------------------------------------------------------------------------- -----------
+        50 Product YK                                                                                                    11 
+        94 Product JV                                                                                                    11 
+        62 Product PB                                                                                                    22 
+        63 Product SS                                                                                                    24 
+        95 Product TA                                                                                                    26 
+        39 Product MD                                                                                                    53 
+         3 Product HR                                                                                                    58 
+         6 Product XL                                                                                                    70 
+        34 Product CX                                                                                                    83 
+        47 Product NR                                                                                                    84 
+
+ 10 rows selected 
+
+***** QUERY 8 Top City in each State list *****
+STATE      CITY                           TOTALSALES
+---------- ------------------------------ ----------
+ACT        CHARNWOOD                            5509 
+NSW        WILEY PARK                           5421 
+NT         HELEN SPRINGS                        1549 
+QLD        ADVANCETOWN                          3345 
+SA         ALBERT PARK                          2746 
+TAS        SQUEAKING POINT                      3959 
+VIC        FYANSFORD                            4277 
+WA         MARMION                              2378 
+
+ 8 rows selected 
+

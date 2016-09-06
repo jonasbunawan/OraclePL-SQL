@@ -1,0 +1,12 @@
+C:\Users\Jonas Bunawan\AppData\Local\Temporary Projects\Assignment1\bin\Debug\Assignment1.exe.config
+C:\Users\Jonas Bunawan\Desktop\Assignment1\Assignment1\bin\Debug\Assignment1.exe.config
+C:\Users\Jonas Bunawan\Desktop\Assignment1\Assignment1\bin\Debug\Assignment1.exe
+C:\Users\Jonas Bunawan\Desktop\Assignment1\Assignment1\bin\Debug\Assignment1.pdb
+C:\Users\Jonas Bunawan\Desktop\Assignment1\Assignment1\bin\Debug\Assignment1.xml
+C:\Users\Jonas Bunawan\Desktop\Assignment1\Assignment1\bin\Debug\Oracle.DataAccess.dll
+C:\Users\Jonas Bunawan\Desktop\Assignment1\Assignment1\obj\Debug\Assignment1.Assignment1.resources
+C:\Users\Jonas Bunawan\Desktop\Assignment1\Assignment1\obj\Debug\Assignment1.Resources.resources
+C:\Users\Jonas Bunawan\Desktop\Assignment1\Assignment1\obj\Debug\Assignment1.vbproj.GenerateResource.Cache
+C:\Users\Jonas Bunawan\Desktop\Assignment1\Assignment1\obj\Debug\Assignment1.exe
+C:\Users\Jonas Bunawan\Desktop\Assignment1\Assignment1\obj\Debug\Assignment1.xml
+C:\Users\Jonas Bunawan\Desktop\Assignment1\Assignment1\obj\Debug\Assignment1.pdb

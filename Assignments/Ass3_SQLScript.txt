@@ -1,0 +1,510 @@
+--Modify this script so that it meets the requirements of Assignment 3 
+--When done, complete these tasks
+--1. Save this file so that it can be submitted via ESP
+--2. Execute the contents of this file in ISQL Jr
+--3. Copy and paste the output from ISQL Jr into a file as described in the assignment document and submit via ESP
+
+prompt START OF OUTPUT SECTION
+prompt Student ID:    1779133
+prompt Student Name:  Kyle Ding
+prompt ----------------------------------------------------------
+prompt Student ID:    700513X
+prompt Student Name:  Jonas Bunawan
+prompt ----------------------------------------------------------
+prompt Student ID:    1799452
+prompt Student Name:  Aaron Long
+prompt -----------------------------------------------------------
+prompt Student ID:    9991417
+prompt Student Name:  Michael Andrew Apostolopoulos
+prompt --------------------------------------------------------------
+
+prompt Task 3.1
+prompt DROP ALL TABLES
+
+DROP TABLE PAYMENT;
+DROP TABLE GIFTSELECTED;
+DROP TABLE BOOKING;
+DROP TABLE GIFTOFFERING;
+
+DROP TABLE WINEEXPERTOFFERING;
+DROP TABLE TOUROFFERING;
+
+DROP TABLE BROCHUREREQUEST;
+DROP TABLE GIFT;
+DROP TABLE WINEEXPERT;
+DROP TABLE CUSTOMER;
+DROP TABLE TOUR;
+
+prompt --------------------------------------------------------------
+prompt Task 3.2
+prompt CREATE ALL TABLES
+
+CREATE TABLE TOUR(
+  TCode				VARCHAR2(2) PRIMARY KEY
+, TDescription		VARCHAR2(200)
+, CurrentPrice		NUMBER(4)
+, ShortName			VARCHAR2(30)
+);
+
+CREATE TABLE CUSTOMER(
+  CNo				VARCHAR2(4) PRIMARY KEY
+, CFirstName		VARCHAR2(30)
+, CSurname			VARCHAR2(30)
+, CAddress			VARCHAR2(30)
+, CPhoneNo			NUMBER(10)
+);
+
+CREATE TABLE GIFT(
+  GCode				VARCHAR2(3) PRIMARY KEY
+, GDescription		VARCHAR2(100)
+);
+
+CREATE TABLE WINEEXPERT(
+  ENo				NUMBER(2) PRIMARY KEY
+, EFirstName		VARCHAR2(30)
+, ESurname			VARCHAR2(30)
+, EPhoneNo			NUMBER(10)
+);
+
+CREATE TABLE TOUROFFERING(
+  TCode				VARCHAR2(2)
+, Price				NUMBER(4)
+, EventDate			VARCHAR2(10)
+, CONSTRAINT PK_TOUROFFERING
+	PRIMARY KEY(TCode, EventDate)
+, CONSTRAINT FK_TOUROFFERING_TCode
+	FOREIGN KEY(TCode) REFERENCES TOUR
+);
+
+CREATE TABLE WINEEXPERTOFFERING(
+  ENo				NUMBER(2)
+, TCode				VARCHAR2(2)
+, EventDate			VARCHAR2(10)
+, CONSTRAINT PK_WINEEXPERTOFFERING
+	PRIMARY KEY(TCode, EventDate, ENo)
+, CONSTRAINT FK_WINEEXPERTOFFERING_TE
+	FOREIGN KEY(TCode, EventDate) REFERENCES TOUROFFERING
+, CONSTRAINT FK_WINEEXPERTOFFERING_ENo
+	FOREIGN KEY(ENo) REFERENCES WINEEXPERT
+);
+
+
+CREATE TABLE GIFTOFFERING(
+  TCode				VARCHAR2(2)
+, EventDate			VARCHAR2(10)
+, GCode				VARCHAR2(3)
+, CONSTRAINT PK_GIFTOFFERING
+	PRIMARY KEY(TCode, EventDate, GCode)
+, CONSTRAINT FK_GIFTOFFERING_EventDateTCode
+	FOREIGN KEY(TCode, EventDate) REFERENCES TOUROFFERING
+, CONSTRAINT FK_GIFTOFFERING_GCode
+	FOREIGN KEY(GCode) REFERENCES GIFT
+);
+
+CREATE TABLE BOOKING(
+  BookingDate		VARCHAR2(10)
+, CNo				VARCHAR2(4)
+, TCode				VARCHAR2(2) NOT NULL
+, EventDate			VARCHAR2(10) NOT NULL
+, CONSTRAINT PK_BOOKING
+	PRIMARY KEY(BookingDate, CNo)
+, CONSTRAINT FK_BOOKING_EventDateTCode
+	FOREIGN KEY(TCode, EventDate) REFERENCES TOUROFFERING
+, CONSTRAINT FK_BOOKING_CNo
+	FOREIGN KEY(CNo) REFERENCES CUSTOMER
+);
+
+CREATE TABLE GIFTSELECTED(
+  TCode				VARCHAR2(2)
+, EventDate			VARCHAR2(10)
+, CNo				VARCHAR2(4)
+, BookingDate		VARCHAR2(10)
+, GCode				VARCHAR2(3)
+, CONSTRAINT PK_GIFTSELECTED
+	PRIMARY KEY(TCode, EventDate, CNo, BookingDate, GCode)
+, CONSTRAINT FK_GIFTSELECTED_BOOKING
+	FOREIGN KEY(BookingDate, CNo) REFERENCES BOOKING 
+, CONSTRAINT FK_GIFTSELECTED_GCode
+	FOREIGN KEY(TCode, EventDate, GCode) REFERENCES GIFTOFFERING
+);
+
+CREATE TABLE PAYMENT(
+  PayDate			VARCHAR2(10)
+, BookingDate		VARCHAR2(10)
+, CNo				VARCHAR2(4)
+, AmtPaid			NUMBER(4)
+, PaymentType		VARCHAR2(10)
+, CONSTRAINT PK_PAYMENT
+	PRIMARY KEY(PayDate, BookingDate, CNo)
+, CONSTRAINT FK_PAYMENT_CNoBookingDate
+	FOREIGN KEY(BookingDate, CNo) REFERENCES BOOKING
+);
+
+CREATE TABLE BROCHUREREQUEST(
+  RequestDate		VARCHAR2(10)
+, TCode				VARCHAR2(2)
+, CNo				VARCHAR2(4)
+, SentDate			VARCHAR2(10)
+, CONSTRAINT PK_BROCHUREREQUEST
+	PRIMARY KEY(RequestDate, TCode, CNo)
+, CONSTRAINT FK_BROCHUREREQUEST_TCode
+	FOREIGN KEY(TCode) REFERENCES TOUR
+, CONSTRAINT FK_BROCHUREREQUEST_CNo
+	FOREIGN KEY(CNo) REFERENCES CUSTOMER
+);
+
+prompt --------------------------------------------------------------
+prompt Task 3.3
+prompt INSERT VALID DATA
+--INSERT DATA INTO TOUR TABLE
+INSERT INTO TOUR(TCode, CurrentPrice, TDescription, ShortName) VALUES(	'B1',	'300',	'A great tour for visitors new to wine tasting. Our experts describe the process of wine tasting, purchasing wine and how to plan your wine cellar',	'Wine Appreciation');
+INSERT INTO TOUR(TCode, CurrentPrice, TDescription, ShortName) VALUES(	'R2',	'200',	'Sample brilliant red wine varieties from this famous region wineries with one of our distinguished wine experts',	'Red Wine Tour');
+INSERT INTO TOUR(TCode, CurrentPrice, TDescription, ShortName) VALUES(	'W1',	'220',	'Taste the best white wines  of the regions many world renowned wineries under the guidance of one of our celebrated wine experts',	'White Wine Tour');
+INSERT INTO TOUR(TCode, CurrentPrice, TDescription, ShortName) VALUES(	'S1',	'250',	'The region is famed for its interesting forms of sparkling wines. Our expert tour leader will ensure that this is an experience never to be forgotten',	'Sparkling Wine Tour');
+
+--INSERT DATA INTO CUSTOMER TABLE
+INSERT INTO CUSTOMER(CNo, CFirstName, CSurname, CAddress, CPhoneNo) VALUES(	'C078', 	'Clare', 	'Watts', 	'15 Dale Rd', 	'92141166'); 
+INSERT INTO CUSTOMER(CNo, CFirstName, CSurname, CAddress, CPhoneNo) VALUES(	'C123', 	'Joel', 	'Warren', 	'7 Bluff Rd', 	'92142277'); 
+INSERT INTO CUSTOMER(CNo, CFirstName, CSurname, CAddress, CPhoneNo) VALUES(	'C178', 	'Grant', 	'Simpson', 	'23 Wall St', 	'92133311'); 
+INSERT INTO CUSTOMER(CNo, CFirstName, CSurname, CAddress, CPhoneNo) VALUES(	'C191', 	'Sarah', 	'Charter', 	'19 Hill Ave', 	'92134477'); 
+INSERT INTO CUSTOMER(CNo, CFirstName, CSurname, CAddress, CPhoneNo) VALUES(	'C218', 	'Sue', 	'Armstrong', 	'1 Hight St', 	'92149911'); 
+INSERT INTO CUSTOMER(CNo, CFirstName, CSurname, CAddress, CPhoneNo) VALUES(	'C215', 	'Henry', 	'Ryde', 	'8 White St', 	'92146688'); 
+INSERT INTO CUSTOMER(CNo, CFirstName, CSurname, CAddress, CPhoneNo) VALUES(	'C225', 	'Ziggy', 	'Lee', 	'17 Low St', 	'92149944'); 
+INSERT INTO CUSTOMER(CNo, CFirstName, CSurname, CAddress, CPhoneNo) VALUES(	'C267', 	'Karin', 	'Black', 	'1 Black St', 	'92148822'); 
+INSERT INTO CUSTOMER(CNo, CFirstName, CSurname, CAddress, CPhoneNo) VALUES(	'C334', 	'Helen', 	'Chin', 	'6 Red Rd', 	'92145500'); 
+INSERT INTO CUSTOMER(CNo, CFirstName, CSurname, CAddress, CPhoneNo) VALUES(	'C367', 	'Ryan', 	'Chin', 	'6 Red Rd', 	'92145522'); 
+INSERT INTO CUSTOMER(CNo, CFirstName, CSurname, CAddress, CPhoneNo) VALUES(	'C555', 	'Ted', 	'Smith', 	'7 John St', 	'92148000'); 
+
+--INSERT DATA INTO GIFT TABLE
+INSERT INTO GIFT(GCode, GDescription) VALUES(	'G01',	'Collectors Red Wine Glass');
+INSERT INTO GIFT(GCode, GDescription) VALUES(	'G02',	'Cork Screw');
+INSERT INTO GIFT(GCode, GDescription) VALUES(	'G03',	'Sherry Glass');
+INSERT INTO GIFT(GCode, GDescription) VALUES(	'G04',	'White Wine Glass');
+INSERT INTO GIFT(GCode, GDescription) VALUES(	'G05',	'Guide to Wine Tasting Handbook');
+INSERT INTO GIFT(GCode, GDescription) VALUES(	'G06',	'Winery Guide Handbook');
+INSERT INTO GIFT(GCode, GDescription) VALUES(	'G07',	'Wine for Women Handbook');
+INSERT INTO GIFT(GCode, GDescription) VALUES(	'G08',	'Wine Museum Voucher');
+INSERT INTO GIFT(GCode, GDescription) VALUES(	'G09',	'Collectors Sparkling Wine Glass');
+INSERT INTO GIFT(GCode, GDescription) VALUES(	'G10',	'Commemorative Cup');
+
+--INSERT DATA INTO WINEEXPERT TABLE
+INSERT INTO WINEEXPERT(ENo, EFirstName, Esurname, EPhoneNo) VALUES(	'1',	'Geof',	'Millar',	'92142222');
+INSERT INTO WINEEXPERT(ENo, EFirstName, Esurname, EPhoneNo) VALUES(	'5',	'Sue',	'Davies',	'92141111');
+INSERT INTO WINEEXPERT(ENo, EFirstName, Esurname, EPhoneNo) VALUES(	'8',	'Hillary',	'Cork',	'92144444');
+INSERT INTO WINEEXPERT(ENo, EFirstName, Esurname, EPhoneNo) VALUES(	'12',	'Penny',	'Folds',	'92143333');
+
+--INSERT DATA INTO TOUROFFERING TABLE
+INSERT INTO TOUROFFERING(Tcode, EventDate, Price) VALUES(	'R2', '2012/10/07', '170');
+INSERT INTO TOUROFFERING(Tcode, EventDate, Price) VALUES(	'B1', '2012/11/11', '270');
+INSERT INTO TOUROFFERING(Tcode, EventDate, Price) VALUES(	'B1', '2013/02/18', '280');
+INSERT INTO TOUROFFERING(Tcode, EventDate, Price) VALUES(	'R2', '2013/02/18', '190');
+INSERT INTO TOUROFFERING(Tcode, EventDate, Price) VALUES(	'R2', '2013/03/07', '200');
+INSERT INTO TOUROFFERING(Tcode, EventDate, Price) VALUES(	'B1', '2013/03/14', '300');
+INSERT INTO TOUROFFERING(Tcode, EventDate, Price) VALUES(	'W1', '2013/06/03', '200');
+INSERT INTO TOUROFFERING(Tcode, EventDate, Price) VALUES(	'S1', '2013/10/27', '250');
+INSERT INTO TOUROFFERING(Tcode, EventDate, Price) VALUES(	'W1', '2013/10/29', '220');
+
+--INSERT DATA INTO WINEEXPERTOFFERING TABLE
+INSERT INTO WINEEXPERTOFFERING(ENo, TCode, EventDate) VALUES(	'12',	'R2', '2012/10/07');
+INSERT INTO WINEEXPERTOFFERING(ENo, TCode, EventDate) VALUES(	'1',	'R2', '2012/10/07');
+INSERT INTO WINEEXPERTOFFERING(ENo, TCode, EventDate) VALUES(	'1',	'B1', '2012/11/11');
+INSERT INTO WINEEXPERTOFFERING(ENo, TCode, EventDate) VALUES(	'8',	'B1', '2013/02/18');
+INSERT INTO WINEEXPERTOFFERING(ENo, TCode, EventDate) VALUES(	'5',	'B1', '2013/02/18');
+INSERT INTO WINEEXPERTOFFERING(ENo, TCode, EventDate) VALUES(	'12',	'R2', '2013/02/18');
+INSERT INTO WINEEXPERTOFFERING(ENo, TCode, EventDate) VALUES(	'1',	'R2', '2013/03/07');
+INSERT INTO WINEEXPERTOFFERING(ENo, TCode, EventDate) VALUES(	'1',	'B1', '2013/03/14');
+INSERT INTO WINEEXPERTOFFERING(ENo, TCode, EventDate) VALUES(	'8',	'B1', '2013/03/14');
+INSERT INTO WINEEXPERTOFFERING(ENo, TCode, EventDate) VALUES(	'5',	'W1', '2013/06/03');
+INSERT INTO WINEEXPERTOFFERING(ENo, TCode, EventDate) VALUES(	'5',	'S1', '2013/10/27');
+INSERT INTO WINEEXPERTOFFERING(ENo, TCode, EventDate) VALUES(	'8',	'W1', '2013/10/29');
+INSERT INTO WINEEXPERTOFFERING(ENo, TCode, EventDate) VALUES(	'12',	'W1', '2013/10/29');
+
+--INSERT DATA INTO GIFTOFFERING TABLE
+INSERT INTO GIFTOFFERING(TCode, EventDate, GCode) VALUES(	'R2', '2012/10/07', 'G01');
+INSERT INTO GIFTOFFERING(TCode, EventDate, GCode) VALUES(	'R2', '2012/10/07', 'G02');
+INSERT INTO GIFTOFFERING(TCode, EventDate, GCode) VALUES(	'R2', '2012/10/07', 'G03');
+INSERT INTO GIFTOFFERING(TCode, EventDate, GCode) VALUES(	'R2', '2012/10/07', 'G04');
+INSERT INTO GIFTOFFERING(TCode, EventDate, GCode) VALUES(	'B1', '2012/11/11', 'G05');
+INSERT INTO GIFTOFFERING(TCode, EventDate, GCode) VALUES(	'B1', '2012/11/11', 'G06');
+INSERT INTO GIFTOFFERING(TCode, EventDate, GCode) VALUES(	'B1', '2013/02/18', 'G01');
+INSERT INTO GIFTOFFERING(TCode, EventDate, GCode) VALUES(	'B1', '2013/02/18', 'G03');
+INSERT INTO GIFTOFFERING(TCode, EventDate, GCode) VALUES(	'B1', '2013/02/18', 'G05');
+INSERT INTO GIFTOFFERING(TCode, EventDate, GCode) VALUES(	'B1', '2013/02/18', 'G07');
+INSERT INTO GIFTOFFERING(TCode, EventDate, GCode) VALUES(	'R2', '2013/02/18', 'G01');
+INSERT INTO GIFTOFFERING(TCode, EventDate, GCode) VALUES(	'R2', '2013/02/18', 'G06');
+INSERT INTO GIFTOFFERING(TCode, EventDate, GCode) VALUES(	'R2', '2013/02/18', 'G07');
+INSERT INTO GIFTOFFERING(TCode, EventDate, GCode) VALUES(	'R2', '2013/02/18', 'G09');
+INSERT INTO GIFTOFFERING(TCode, EventDate, GCode) VALUES(	'R2', '2013/03/07', 'G02');
+INSERT INTO GIFTOFFERING(TCode, EventDate, GCode) VALUES(	'R2', '2013/03/07', 'G06');
+INSERT INTO GIFTOFFERING(TCode, EventDate, GCode) VALUES(	'R2', '2013/03/07', 'G08');
+INSERT INTO GIFTOFFERING(TCode, EventDate, GCode) VALUES(	'B1', '2013/03/14', 'G04');
+INSERT INTO GIFTOFFERING(TCode, EventDate, GCode) VALUES(	'B1', '2013/03/14', 'G05');
+INSERT INTO GIFTOFFERING(TCode, EventDate, GCode) VALUES(	'B1', '2013/03/14', 'G06');
+INSERT INTO GIFTOFFERING(TCode, EventDate, GCode) VALUES(	'W1', '2013/06/03', 'G01');
+INSERT INTO GIFTOFFERING(TCode, EventDate, GCode) VALUES(	'W1', '2013/06/03', 'G04');
+INSERT INTO GIFTOFFERING(TCode, EventDate, GCode) VALUES(	'W1', '2013/06/03', 'G06');
+INSERT INTO GIFTOFFERING(TCode, EventDate, GCode) VALUES(	'S1', '2013/10/27', 'G02');
+INSERT INTO GIFTOFFERING(TCode, EventDate, GCode) VALUES(	'S1', '2013/10/27', 'G04');
+INSERT INTO GIFTOFFERING(TCode, EventDate, GCode) VALUES(	'S1', '2013/10/27', 'G09');
+INSERT INTO GIFTOFFERING(TCode, EventDate, GCode) VALUES(	'W1', '2013/10/29', 'G01');
+INSERT INTO GIFTOFFERING(TCode, EventDate, GCode) VALUES(	'W1', '2013/10/29', 'G05');
+INSERT INTO GIFTOFFERING(TCode, EventDate, GCode) VALUES(	'W1', '2013/10/29', 'G06');
+INSERT INTO GIFTOFFERING(TCode, EventDate, GCode) VALUES(	'W1', '2013/10/29', 'G09');
+
+--INSERT DATA INTO BOOKING TABLE
+INSERT INTO BOOKING(CNo, BookingDate, TCode, EventDate) VALUES(	'C123', '2013/01/18', 'B1', '2013/02/18');
+INSERT INTO BOOKING(CNo, BookingDate, TCode, EventDate) VALUES(	'C218', '2013/01/18', 'B1', '2013/02/18');
+INSERT INTO BOOKING(CNo, BookingDate, TCode, EventDate) VALUES(	'C178', '2013/01/18', 'B1', '2013/02/18');
+INSERT INTO BOOKING(CNo, BookingDate, TCode, EventDate) VALUES(	'C191', '2013/01/18', 'B1', '2013/02/18');
+INSERT INTO BOOKING(CNo, BookingDate, TCode, EventDate) VALUES(	'C334', '2013/01/18', 'B1', '2013/02/18');
+INSERT INTO BOOKING(CNo, BookingDate, TCode, EventDate) VALUES(	'C367', '2013/01/18', 'B1', '2013/02/18');
+INSERT INTO BOOKING(CNo, BookingDate, TCode, EventDate) VALUES(	'C555', '2013/01/18', 'B1', '2013/02/18');
+INSERT INTO BOOKING(CNo, BookingDate, TCode, EventDate) VALUES(	'C078', '2012/12/18', 'R2', '2013/02/18');
+INSERT INTO BOOKING(CNo, BookingDate, TCode, EventDate) VALUES(	'C267', '2012/12/18', 'R2', '2013/02/18');
+INSERT INTO BOOKING(CNo, BookingDate, TCode, EventDate) VALUES(	'C225', '2012/12/18', 'R2', '2013/02/18');
+INSERT INTO BOOKING(CNo, BookingDate, TCode, EventDate) VALUES(	'C218', '2013/01/07', 'R2', '2013/03/07');
+INSERT INTO BOOKING(CNo, BookingDate, TCode, EventDate) VALUES(	'C191', '2013/01/07', 'R2', '2013/03/07');
+INSERT INTO BOOKING(CNo, BookingDate, TCode, EventDate) VALUES(	'C123', '2013/01/07', 'R2', '2013/03/07');
+INSERT INTO BOOKING(CNo, BookingDate, TCode, EventDate) VALUES(	'C078', '2013/01/03', 'W1', '2013/06/03');
+INSERT INTO BOOKING(CNo, BookingDate, TCode, EventDate) VALUES(	'C123', '2013/01/03', 'W1', '2013/06/03');
+INSERT INTO BOOKING(CNo, BookingDate, TCode, EventDate) VALUES(	'C225', '2013/01/03', 'W1', '2013/06/03');
+INSERT INTO BOOKING(CNo, BookingDate, TCode, EventDate) VALUES(	'C367', '2013/01/03', 'W1', '2013/06/03');
+INSERT INTO BOOKING(CNo, BookingDate, TCode, EventDate) VALUES(	'C191', '2012/08/11', 'B1', '2012/11/11');
+INSERT INTO BOOKING(CNo, BookingDate, TCode, EventDate) VALUES(	'C555', '2012/08/11', 'B1', '2012/11/11');
+INSERT INTO BOOKING(CNo, BookingDate, TCode, EventDate) VALUES(	'C267', '2012/08/11', 'B1', '2012/11/11');
+INSERT INTO BOOKING(CNo, BookingDate, TCode, EventDate) VALUES(	'C225', '2012/06/07', 'R2', '2012/10/07');
+INSERT INTO BOOKING(CNo, BookingDate, TCode, EventDate) VALUES(	'C078', '2012/06/07', 'R2', '2012/10/07');
+INSERT INTO BOOKING(CNo, BookingDate, TCode, EventDate) VALUES(	'C123', '2012/06/07', 'R2', '2012/10/07');
+
+--INSERT DATA INTO GIFTSELECTED TABLE
+INSERT INTO GIFTSELECTED(CNo, BookingDate, TCode, EventDate, GCode) VALUES(	'C123', '2013/01/18', 'B1', '2013/02/18', 'G01');
+INSERT INTO GIFTSELECTED(CNo, BookingDate, TCode, EventDate, GCode) VALUES(	'C218', '2013/01/18', 'B1', '2013/02/18', 'G01');
+INSERT INTO GIFTSELECTED(CNo, BookingDate, TCode, EventDate, GCode) VALUES(	'C218', '2013/01/18', 'B1', '2013/02/18', 'G05');
+INSERT INTO GIFTSELECTED(CNo, BookingDate, TCode, EventDate, GCode) VALUES(	'C178', '2013/01/18', 'B1', '2013/02/18', 'G05');
+INSERT INTO GIFTSELECTED(CNo, BookingDate, TCode, EventDate, GCode) VALUES(	'C178', '2013/01/18', 'B1', '2013/02/18', 'G07');
+INSERT INTO GIFTSELECTED(CNo, BookingDate, TCode, EventDate, GCode) VALUES(	'C191', '2013/01/18', 'B1', '2013/02/18', 'G05');
+INSERT INTO GIFTSELECTED(CNo, BookingDate, TCode, EventDate, GCode) VALUES(	'C334', '2013/01/18', 'B1', '2013/02/18', 'G05');
+INSERT INTO GIFTSELECTED(CNo, BookingDate, TCode, EventDate, GCode) VALUES(	'C334', '2013/01/18', 'B1', '2013/02/18', 'G07');
+INSERT INTO GIFTSELECTED(CNo, BookingDate, TCode, EventDate, GCode) VALUES(	'C367', '2013/01/18', 'B1', '2013/02/18', 'G07');
+INSERT INTO GIFTSELECTED(CNo, BookingDate, TCode, EventDate, GCode) VALUES(	'C078', '2012/12/18', 'R2', '2013/02/18', 'G01');
+INSERT INTO GIFTSELECTED(CNo, BookingDate, TCode, EventDate, GCode) VALUES(	'C078', '2012/12/18', 'R2', '2013/02/18', 'G07');
+INSERT INTO GIFTSELECTED(CNo, BookingDate, TCode, EventDate, GCode) VALUES(	'C267', '2012/12/18', 'R2', '2013/02/18', 'G01');
+INSERT INTO GIFTSELECTED(CNo, BookingDate, TCode, EventDate, GCode) VALUES(	'C225', '2012/12/18', 'R2', '2013/02/18', 'G07');
+INSERT INTO GIFTSELECTED(CNo, BookingDate, TCode, EventDate, GCode) VALUES(	'C225', '2012/12/18', 'R2', '2013/02/18', 'G09');
+INSERT INTO GIFTSELECTED(CNo, BookingDate, TCode, EventDate, GCode) VALUES(	'C218', '2013/01/07', 'R2', '2013/03/07', 'G02');
+INSERT INTO GIFTSELECTED(CNo, BookingDate, TCode, EventDate, GCode) VALUES(	'C218', '2013/01/07', 'R2', '2013/03/07', 'G06');
+INSERT INTO GIFTSELECTED(CNo, BookingDate, TCode, EventDate, GCode) VALUES(	'C191', '2013/01/07', 'R2', '2013/03/07', 'G08');
+INSERT INTO GIFTSELECTED(CNo, BookingDate, TCode, EventDate, GCode) VALUES(	'C123', '2013/01/07', 'R2', '2013/03/07', 'G02');
+INSERT INTO GIFTSELECTED(CNo, BookingDate, TCode, EventDate, GCode) VALUES(	'C123', '2013/01/03', 'W1', '2013/06/03', 'G04');
+INSERT INTO GIFTSELECTED(CNo, BookingDate, TCode, EventDate, GCode) VALUES(	'C225', '2013/01/03', 'W1', '2013/06/03', 'G04');
+INSERT INTO GIFTSELECTED(CNo, BookingDate, TCode, EventDate, GCode) VALUES(	'C225', '2013/01/03', 'W1', '2013/06/03', 'G06');
+INSERT INTO GIFTSELECTED(CNo, BookingDate, TCode, EventDate, GCode) VALUES(	'C367', '2013/01/03', 'W1', '2013/06/03', 'G01');
+INSERT INTO GIFTSELECTED(CNo, BookingDate, TCode, EventDate, GCode) VALUES(	'C367', '2013/01/03', 'W1', '2013/06/03', 'G04');
+INSERT INTO GIFTSELECTED(CNo, BookingDate, TCode, EventDate, GCode) VALUES(	'C191', '2012/08/11', 'B1', '2012/11/11', 'G05');
+INSERT INTO GIFTSELECTED(CNo, BookingDate, TCode, EventDate, GCode) VALUES(	'C191', '2012/08/11', 'B1', '2012/11/11', 'G06');
+INSERT INTO GIFTSELECTED(CNo, BookingDate, TCode, EventDate, GCode) VALUES(	'C555', '2012/08/11', 'B1', '2012/11/11', 'G06');
+INSERT INTO GIFTSELECTED(CNo, BookingDate, TCode, EventDate, GCode) VALUES(	'C555', '2012/08/11', 'B1', '2012/11/11', 'G05');
+INSERT INTO GIFTSELECTED(CNo, BookingDate, TCode, EventDate, GCode) VALUES(	'C267', '2012/08/11', 'B1', '2012/11/11', 'G05');
+INSERT INTO GIFTSELECTED(CNo, BookingDate, TCode, EventDate, GCode) VALUES(	'C267', '2012/08/11', 'B1', '2012/11/11', 'G06');
+INSERT INTO GIFTSELECTED(CNo, BookingDate, TCode, EventDate, GCode) VALUES(	'C225', '2012/06/07', 'R2', '2012/10/07', 'G01');
+INSERT INTO GIFTSELECTED(CNo, BookingDate, TCode, EventDate, GCode) VALUES(	'C225', '2012/06/07', 'R2', '2012/10/07', 'G04');
+INSERT INTO GIFTSELECTED(CNo, BookingDate, TCode, EventDate, GCode) VALUES(	'C078', '2012/06/07', 'R2', '2012/10/07', 'G02');
+INSERT INTO GIFTSELECTED(CNo, BookingDate, TCode, EventDate, GCode) VALUES(	'C078', '2012/06/07', 'R2', '2012/10/07', 'G03');
+INSERT INTO GIFTSELECTED(CNo, BookingDate, TCode, EventDate, GCode) VALUES(	'C123', '2012/06/07', 'R2', '2012/10/07', 'G04');
+
+--INSERT DATA INTO PAYMENT TABLE
+INSERT INTO PAYMENT(PayDate, CNo, BookingDate, AmtPaid, PaymentType) VALUES('2013/01/31', 'C123', '2013/01/18', '280',	'Cash');
+INSERT INTO PAYMENT(PayDate, CNo, BookingDate, AmtPaid, PaymentType) VALUES('2013/01/31', 'C218', '2013/01/18', '280',	'CreditCard');
+INSERT INTO PAYMENT(PayDate, CNo, BookingDate, AmtPaid, PaymentType) VALUES('2013/01/31', 'C178', '2013/01/18', '280',	'Cheque');
+INSERT INTO PAYMENT(PayDate, CNo, BookingDate, AmtPaid, PaymentType) VALUES('2013/01/31', 'C191', '2013/01/18', '280',	'Cash');
+INSERT INTO PAYMENT(PayDate, CNo, BookingDate, AmtPaid, PaymentType) VALUES('2013/01/31', 'C334', '2013/01/18', '280',	'CreditCard');
+INSERT INTO PAYMENT(PayDate, CNo, BookingDate, AmtPaid, PaymentType) VALUES('2013/01/31', 'C367', '2013/01/18', '280',	'Cheque');
+INSERT INTO PAYMENT(PayDate, CNo, BookingDate, AmtPaid, PaymentType) VALUES('2013/01/31', 'C555', '2013/01/18', '325',	'Cash');
+INSERT INTO PAYMENT(PayDate, CNo, BookingDate, AmtPaid, PaymentType) VALUES('2012/12/31', 'C078', '2012/12/18', '190',	'CreditCard');
+INSERT INTO PAYMENT(PayDate, CNo, BookingDate, AmtPaid, PaymentType) VALUES('2012/12/31', 'C267', '2012/12/18', '190',	'Cheque');
+INSERT INTO PAYMENT(PayDate, CNo, BookingDate, AmtPaid, PaymentType) VALUES('2012/12/31', 'C225', '2012/12/18', '190',	'Cash');
+INSERT INTO PAYMENT(PayDate, CNo, BookingDate, AmtPaid, PaymentType) VALUES('2013/01/31', 'C218', '2013/01/07', '200',	'CreditCard');
+INSERT INTO PAYMENT(PayDate, CNo, BookingDate, AmtPaid, PaymentType) VALUES('2013/01/31', 'C191', '2013/01/07', '200',	'Cash');
+INSERT INTO PAYMENT(PayDate, CNo, BookingDate, AmtPaid, PaymentType) VALUES('2013/01/31', 'C123', '2013/01/07', '270',	'Cash');
+INSERT INTO PAYMENT(PayDate, CNo, BookingDate, AmtPaid, PaymentType) VALUES('2013/01/31', 'C078', '2013/01/03', '100',	'CreditCard');
+INSERT INTO PAYMENT(PayDate, CNo, BookingDate, AmtPaid, PaymentType) VALUES('2013/01/31', 'C123', '2013/01/03', '200',	'Cash');
+INSERT INTO PAYMENT(PayDate, CNo, BookingDate, AmtPaid, PaymentType) VALUES('2013/01/31', 'C225', '2013/01/03', '200',	'Cash');
+INSERT INTO PAYMENT(PayDate, CNo, BookingDate, AmtPaid, PaymentType) VALUES('2013/01/31', 'C367', '2013/01/03', '200',	'Cheque');
+INSERT INTO PAYMENT(PayDate, CNo, BookingDate, AmtPaid, PaymentType) VALUES('2012/08/31', 'C191', '2012/08/11', '270',	'Cash');
+INSERT INTO PAYMENT(PayDate, CNo, BookingDate, AmtPaid, PaymentType) VALUES('2012/08/31', 'C555', '2012/08/11', '270',	'Cash');
+INSERT INTO PAYMENT(PayDate, CNo, BookingDate, AmtPaid, PaymentType) VALUES('2012/08/31', 'C267', '2012/08/11', '270',	'Cheque');
+INSERT INTO PAYMENT(PayDate, CNo, BookingDate, AmtPaid, PaymentType) VALUES('2012/06/30', 'C225', '2012/06/07', '50',	'Cash');
+INSERT INTO PAYMENT(PayDate, CNo, BookingDate, AmtPaid, PaymentType) VALUES('2012/06/30', 'C078', '2012/06/07', '170',	'CreditCard');
+INSERT INTO PAYMENT(PayDate, CNo, BookingDate, AmtPaid, PaymentType) VALUES('2012/06/30', 'C123', '2012/06/07', '170',	'Cash');
+
+--INSERT DATA INTO BROCHUREREQUEST TABLE
+INSERT INTO BROCHUREREQUEST(CNo, TCode, RequestDate, SentDate) VALUES(	'C215',	'B1', '2013/08/19', '2013/08/20');
+INSERT INTO BROCHUREREQUEST(CNo, TCode, RequestDate, SentDate) VALUES(	'C218',	'B1', '2013/01/05', '2013/01/07');
+INSERT INTO BROCHUREREQUEST(CNo, TCode, RequestDate, SentDate) VALUES(	'C218',	'R2', '2013/01/05', '2013/01/07');
+INSERT INTO BROCHUREREQUEST(CNo, TCode, RequestDate, SentDate) VALUES(	'C225',	'B1', '2012/09/15', '2012/09/17');
+INSERT INTO BROCHUREREQUEST(CNo, TCode, RequestDate, SentDate) VALUES(	'C225',	'R2', '2012/09/15', '2012/09/17');
+INSERT INTO BROCHUREREQUEST(CNo, TCode, RequestDate, SentDate) VALUES(	'C225',	'W1', '2012/09/15', '2012/09/19');
+INSERT INTO BROCHUREREQUEST(CNo, TCode, RequestDate, SentDate) VALUES(	'C267',	'W1', '2012/06/19', '2012/06/20');
+INSERT INTO BROCHUREREQUEST(CNo, TCode, RequestDate, SentDate) VALUES(	'C334',	'B1', '2013/01/06', '2013/01/07');
+
+prompt --------------------------------------------------------------
+prompt Task 4
+prompt TEST CONSTRAINTS HERE WITH STATEMENTS THAT MUST FAIL
+
+INSERT INTO WINEEXPERTOFFERING(ENo, TCode, EventDate) VALUES( '22', 'B1', '2013/02/18');
+
+INSERT INTO BOOKING(CNo, BookingDate, TCode, EventDate) VALUES( 'C078', '2013/11/03', 'W1','2014/01/01');
+
+INSERT INTO PAYMENT(PayDate, CNo, BookingDate, AmtPaid, PaymentType) VALUES('2013/01/31', 'C225', '2013/01/18', '280', 'Cash');
+
+INSERT INTO GIFTOFFERING(TCode, EventDate, GCode) VALUES( 'W1', '2014/01/01', 'G09');
+
+INSERT INTO GIFTSELECTED(CNo, BookingDate, TCode, EventDate, GCode) VALUES( 'C123', '2013/01/18', 'R2', '2013/01/07', 'G09');
+
+prompt --------------------------------------------------------------
+prompt Task 5
+prompt QUERY 1
+SELECT 
+	C.CNo "Customer No"
+	, C.CFirstName || ' ' || C.CSurname "Customer Name"
+	, C.CAddress "Address"
+	, C.CPhoneNo "Phone No"
+FROM CUSTOMER C
+ORDER BY "Customer No";
+prompt --------------------------------------------------------------
+prompt QUERY 2
+SELECT 
+	O.TCode "Tour Code"
+	, O.EventDate "Event Date"
+	, W.EFirstName || ' ' || W.ESurname "Expert Name(s)"
+FROM WINEEXPERTOFFERING WO
+JOIN TOUROFFERING O
+on WO.EventDate = O.EventDate
+JOIN WINEEXPERT W
+on WO.ENo = W.ENo
+ORDER BY O.TCode ,O.EventDate ,W.ESurname;
+
+prompt --------------------------------------------------------------
+prompt QUERY 3
+SELECT 
+	O.TCode "Tour Code"
+	, O.EventDate "Event Date"
+	, C.CNo "Customer No"
+	, C.CFirstName || ' ' || C.CSurname "Customer Name"
+FROM BOOKING B
+JOIN TOUROFFERING O
+on O.EventDate = B.EventDate
+JOIN CUSTOMER C
+on B.CNo = C.CNo
+ORDER BY O.TCode ,O.EventDate ,C.CNo;
+
+prompt --------------------------------------------------------------
+prompt QUERY 4
+SELECT 
+	DISTINCT O.TCode "Tour Code"
+	, O.EventDate "Event Date"
+	, G.GCode "Gift Code"
+	, G.GDescription "Gift Description"
+FROM GIFTOFFERING GO
+JOIN TOUROFFERING O
+on O.EventDate = GO.EventDate
+JOIN GIFT G
+on GO.GCode = G.GCode
+ORDER BY O.TCode ,O.EventDate ,G.GCode;
+prompt --------------------------------------------------------------
+prompt QUERY 5
+SELECT 
+	DISTINCT GO2.TCode "Tour Code"
+	, GO1.EventDate "Event Date"
+	, C.CNo "Customer No"
+	, C.CFirstName || ' ' || C.CSurname "Customer Name"
+	, G.GCode "Gift Code"
+	, G.GDescription "Gift Description"
+FROM GIFTSELECTED GS
+JOIN BOOKING B
+on B.BookingDate = GS.BookingDate
+JOIN CUSTOMER C
+on B.CNo = C.CNo
+JOIN GIFTOFFERING GO
+on GO.GCode = GS.GCode
+JOIN GIFTOFFERING GO1
+on GO1.EventDate = GS.EventDate
+JOIN GIFTOFFERING GO2
+on GO2.TCode =GS.TCode
+JOIN GIFT G
+on GO.GCode = G.GCode
+ORDER BY GO2.TCode ,GO1.EventDate ,C.CNo,G.GCode;
+prompt --------------------------------------------------------------
+
+
+prompt --------------------------------------------------------------
+prompt Task 6
+
+prompt QUERY 6
+SELECT 
+	C.CNo "Customer No"
+	, C.CFirstName || ' ' || C.CSurname "Customer Name"
+	, SUM(P.AmtPaid) "Total Payment" FROM CUSTOMER C
+LEFT OUTER JOIN BOOKING B
+on C.CNo = B.CNo
+LEFT OUTER JOIN PAYMENT P
+on P.CNo = B.CNo
+GROUP BY C.CNo, C.CFirstName || ' ' || C.CSurname
+ORDER BY "Customer No";
+
+prompt --------------------------------------------------------------
+prompt QUERY 7
+SELECT 
+	T.TCode "Tour Code"
+	, SUM(P.AmtPaid) "Total Payment" FROM TOUR T
+LEFT OUTER JOIN TOUROFFERING O
+on T.TCode = O.TCode
+LEFT OUTER JOIN BOOKING B
+on O.TCode = B.TCode
+LEFT OUTER JOIN PAYMENT P
+on B.BookingDate = P.BookingDate
+GROUP BY T.TCode
+ORDER BY "Tour Code";
+
+prompt --------------------------------------------------------------
+prompt QUERY 8
+SELECT 
+	G.GCode "Gift Code"
+	, G.GDescription "Gift Description"
+	, COUNT(S.GCode) "Total Numbers Being Selected" FROM GIFT G
+LEFT OUTER JOIN GIFTOFFERING O
+on G.GCode = O.GCode
+LEFT OUTER JOIN GIFTSELECTED S
+on S.GCode = O.GCode
+GROUP BY G.GCode, G.GDescription
+ORDER BY "Total Numbers Being Selected" DESC;
+
+prompt --------------------------------------------------------------
+prompt QUERY 9
+SELECT 
+	T.TCode "Tour Code"
+	, T.ShortName "Description"
+	, T.CurrentPrice "Current Price"
+	, MIN(O.Price) "Minimum Price" FROM TOUR T
+LEFT OUTER JOIN TOUROFFERING O
+on T.TCode = O.TCode
+GROUP BY T.TCode, T.ShortName, T.CurrentPrice
+ORDER BY "Description";
+
+prompt --------------------------------------------------------------
+prompt QUERY 10
+SELECT 
+	R.CNo "Customer No"
+	, C.CFirstName || ' ' || C.CSurname "Customer Name"
+	, B.TCode "Tour Code"
+	, B.EventDate "Event Date" 
+FROM 	BROCHUREREQUEST R
+INNER JOIN CUSTOMER C
+on 	C.CNo = R.CNo
+INNER JOIN BOOKING B
+on 	B.TCode = R.TCode 
+	AND C.CNo = B.CNo
+ORDER BY "Event Date";
+
+prompt --------------------------------------------------------------
+prompt END OF OUTPUT SECTION
